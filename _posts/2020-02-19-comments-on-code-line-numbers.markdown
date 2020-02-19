@@ -54,4 +54,4 @@ If you inspect the page<br/><br/>
 ![inspecting the lineno element](/assets//images/lineno.png)
 
 
-<!-- {% include lineComments.html %} -->
+{% include lineComments.html %}
