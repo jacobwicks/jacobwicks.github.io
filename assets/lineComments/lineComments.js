@@ -48,7 +48,7 @@ const positionAllComments = reposition => {
     const wrapper = document.getElementsByClassName('wrapper')[0];
     //we use the width of wrapper as the basis for calculating how wide to make the comments
     const wrapperWidth = wrapper.offsetWidth;
-    const commentWidth = wrapperWidth * 0.5;
+    let commentWidth = wrapperWidth * 0.5;
 
     //get all lineComments from the document
     //getElementsByClassName returns an HTMLCollection
@@ -86,6 +86,11 @@ const positionAllComments = reposition => {
         //get the left offset to position the comments horizontally
         const leftOffset = getOffsetLeft(codeBlock);
 
+        //if comments are wider than the offset, they'll appear partially offscreen
+        if (commentWidth > leftOffset && leftOffset > 50) {
+            //set commentWidth to offset minus 50 to keep comment onscreen
+            commentWidth = leftOffset - 50;
+        }
         //add each comment to the line number in this block
         blockComments.forEach((comment, commentIndex) => {
             //element 3 of the array from id.split is the line number
@@ -97,14 +102,18 @@ const positionAllComments = reposition => {
 
             comment.classList.add('line_comment_container');
 
-            //if there's a nextCommentLineNumber
+            //returns undefined or the line number of the next comment
             const nextCommentLineNumber =
                 blockComments[commentIndex + 1] &&
                 getLineNumber(blockComments[commentIndex + 1]);
-            //and the nextCommentLineNumber is within 3 lines of this comment
+
+            //nextCommentIsClose is true if the next comment exists and its line number is within 3
             const nextCommentIsClose =
                 nextCommentLineNumber !== undefined &&
                 nextCommentLineNumber - lineNumber < 4;
+
+            //if there's a nextCommentLineNumber
+            //and the nextCommentLineNumber is within 3 lines of this comment
             //this comment should be a single line when collapsed
             nextCommentIsClose && comment.classList.add('single_height');
 
@@ -132,13 +141,12 @@ const positionAllComments = reposition => {
 
                 //set the class to the classList variable
                 //use string.slice to pull off the opening <p> tag before inserting the lineLabel
-                // const newContents = `<div class="${classList}">${trimmed.slice(
-                //     0,
-                //     3
-                // )}${lineLabel} ${trimmed.slice(3, trimmed.length - 1)}</div>`;
-                const newContents = `<div class="${classList}">${lineLabel} ${trimmed}</div>`;
+                const newContents = `<div class="${classList}">${trimmed.slice(
+                    0,
+                    3
+                )}${lineLabel} ${trimmed.slice(3, trimmed.length - 1)}</div>`;
 
-                //set the comment innerHTML
+                //set the comment innerHTML to the new div with line number span
                 comment.innerHTML = newContents;
             }
         });
