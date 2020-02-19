@@ -24,4 +24,4 @@ const getOffsetTop = element => {
 
 <div class="lineComment" id="block.0.line.7">This is the code inside the while loop. It will execute as long as the variable `element` returns a truthy value. += is the addition assignment operator. Here, it is adding the value of the offSetTop property of the current element to the value of the variable named offsetTop.</div>
 
-
+{% include lineComments.html %}
