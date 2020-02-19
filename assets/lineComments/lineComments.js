@@ -91,6 +91,7 @@ const positionAllComments = reposition => {
             //set commentWidth to offset minus 50 to keep comment onscreen
             commentWidth = leftOffset - 50;
         }
+
         //add each comment to the line number in this block
         blockComments.forEach((comment, commentIndex) => {
             //element 3 of the array from id.split is the line number
