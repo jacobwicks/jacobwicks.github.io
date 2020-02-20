@@ -26,6 +26,7 @@ and displays the background color
 its default state is collapsed, displaying a maximum of 3 lines of text
 max-height is set to 3 * the lh variable*/
 .line_comment_container {
+    border-top: medium solid white;
     position: absolute;
     background-color: gray;
     text-align: left;
@@ -93,4 +94,8 @@ that the comment is pointed at */
 used when comments are closer than three lines apart */
 .single_height {
     max-height: var(--lh);
+}
+
+.invalid_assignment {
+    background-color: red;
 }

@@ -4,5 +4,5 @@
 
 layout: home
 ---
-
+<head></head>
 Hello World
