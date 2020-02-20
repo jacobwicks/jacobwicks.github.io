@@ -193,9 +193,6 @@ const positionAllComments = reposition => {
             //find the vertical position of the line number
             const topOffset = getOffsetTop(targetLine);
 
-            //this element gets the comment container style applied
-            comment.classList.add('line_comment_container');
-
             //set the position of the comment
             comment.style.width = `${commentWidth}px`;
             comment.style.top = `${topOffset}px`;
@@ -204,16 +201,8 @@ const positionAllComments = reposition => {
             //first time through add the line label and content div inside the comment
             //don't need to do it when repositioning
             if (!reposition) {
-                //returns undefined or the line number of the next comment
-                const nextCommentLineNumber =
-                    blockComments[commentIndex + 1] &&
-                    getLineNumber(blockComments[commentIndex + 1]);
-
-                //nextCommentIsClose is true if the next comment exists and its line number is within 3
-                //this will be used to set the height of the comment container and the content
-                const nextCommentIsClose =
-                    nextCommentLineNumber !== undefined &&
-                    nextCommentLineNumber - lineNumber < 4;
+                //this comment gets the comment container style applied
+                comment.classList.add('line_comment_container');
 
                 //get the content of the comment
                 const content = comment.innerHTML;
@@ -226,9 +215,17 @@ const positionAllComments = reposition => {
                 //which is max_height of 3 lines when collapsed
                 let classList = 'line_comment_content';
 
+                //returns undefined or the line number of the next comment
+                const nextCommentLineNumber =
+                    blockComments[commentIndex + 1] &&
+                    getLineNumber(blockComments[commentIndex + 1]);
+
                 //if the next comment is closer than 4 lines
                 //make this comment_content single_height, so max_height of 1 line
-                if (nextCommentIsClose) {
+                if (
+                    nextCommentLineNumber !== undefined &&
+                    nextCommentLineNumber - lineNumber < 4
+                ) {
                     //make the comment container single height
                     comment.classList.add('single_height');
                     //content classList also has single height

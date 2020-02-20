@@ -70,6 +70,8 @@ These line numbers are what we want the comment boxes to line up with.
 ## The JavaScript
 We use JavaScript and CSS to create the comment boxes. First let's look at the JavaScript. After that, I'll explain how the CSS works.
 
+Most of the JavaScript is inside of a function called `positionAllComments`. On this page, I'll explain the major parts of `positionAllComments` and some of the important helper functions. If you want to see all of the JavaScript, you can look at the [source code here](). There are a few pieces of code that should only run when the page is loaded.  So `positionAllComments` takes one argument, `reposition`.  When the page is loaded, `positionAllComments` is invoked with `reposition` undefined. When the page is resized, `positionAllComments` is invoked with `reposition` true. So some code will only be executed if `reposition` is false. That code will only run when the page is loaded, not each time the user resizes the page. 
+
 # Use JavaScript to Add Ids so You Can Find the Line Numbers
 This code finds each element that has the 'lineno' class. Then it adds a div with an id to each line number inside each 'lineno' element.
 {% highlight javascript linenos %}
@@ -225,9 +227,6 @@ blockComments.forEach((comment, commentIndex) => {
             //find the vertical position of the line number
             const topOffset = getOffsetTop(targetLine);
 
-            //this element gets the comment container style applied
-            comment.classList.add('line_comment_container');
-
             //set the position of the comment
             comment.style.width = `${commentWidth}px`;
             comment.style.top = `${topOffset}px`;
@@ -246,15 +245,15 @@ The `getLineNumber` function takes a comment and returns the lineNumber from the
 The `getOffsetTop` function finds how far the element is from the top of the page. The code for `getOffsetTop` is shown below.
 </div>
 
-<div class="lineComment" id="block.4.line.18">
+<div class="lineComment" id="block.4.line.15">
 `commentWidth` is calculated earlier based on the width of the wrapper element created by Jekyll. `commentWidth` will be reduced if the screen is very narrow. 
 </div>
 
-<div class="lineComment" id="block.4.line.20">
+<div class="lineComment" id="block.4.line.17">
 `leftOffset` is calculated earlier. `leftOffset` is calculated using a function that works like the `getOffSetTop` function shown below. 
 </div>
 
-# Using Offsets To Find a div On the Page
+# Using Offsets To Find the Position of a Line Number div On the Page
 
 To line the comments up with a div, we need to know where the top of that div is. Here's the function that takes an element and returns the top offset, which is how far in pixels the top of the element is from the top page. Because the offsetTop property of each element tells us what its top offset is relative to the parent of that element, we have to add the offset of all the parent elements together to get the correct number. Use a while loop to loop through each parent of the element.
 
@@ -289,6 +288,67 @@ The [HTMLElement.offsetParent](https://developer.mozilla.org/en-US/docs/Web/API/
 
 There's a similar function that finds the leftOffset, which is how far from the left side of the screen an element is.
 
+# Adding Classes to Style the lineComment
+This code adds a label and some styling to the content of the lineComment. This code will only run when the page loads, because `reposition` will be falsy. When the page is resized, `reposition` will be truthy and this code will not be executed again. 
+
+{% highlight javascript linenos %}
+            //first time through add the line label and content div inside the comment
+            //don't need to do it when repositioning
+            if (!reposition) {
+                //this comment gets the comment container style applied
+                comment.classList.add('line_comment_container');
+                
+                //get the content of the comment
+                const content = comment.innerHTML;
+
+                //add a label span to the content
+                const label = `Line: ${lineNumber}`;
+                const labeledContent = addLabelToContent({ content, label });
+
+                //the class is line_comment_content
+                //which is max_height of 3 lines when collapsed
+                let classList = 'line_comment_content';
+
+                //returns undefined or the line number of the next comment
+                const nextCommentLineNumber =
+                    blockComments[commentIndex + 1] &&
+                    getLineNumber(blockComments[commentIndex + 1]);
+
+                //if the next comment is closer than 4 lines
+                //make this comment_content single_height, so max_height of 1 line
+                if (
+                    nextCommentLineNumber !== undefined &&
+                    nextCommentLineNumber - lineNumber < 4
+                ) {
+                    //make the comment container single height
+                    comment.classList.add('single_height');
+                    //content classList also has single height
+                    classList += ' single_height';
+                }
+
+                //put the labeled content inside a div with the container classList
+                const newContent = `<div class="${classList}">${labeledContent}</div>`;
+
+                //set the comment innerHTML to the new div
+                comment.innerHTML = newContent;
+            }
+{% endhighlight %}
+
+<div class = "lineComment" id="block.6.line.12">
+The `addLabelToContent` function takes a content string and inserts a &lt;span&gt; element with the label string into it.
+</div>
+
+<div class = "lineComment" id="block.6.line.16">
+The classes applied to the content will affect how many lines it takes up on the screen when the comment is collapsed.
+</div>
+
+<div class = "lineComment" id="block.6.line.19">
+If there is a next comment in the `blockComments` array, find its line number so that we can see if it is within 3 lines of this comment's line number. Remember, the comments inside `blockComments` are sorted by line number, so we know that the next comment is the comment with the next line number. 
+</div>
+
+<div class = "lineComment" id="block.6.line.36">
+Use a [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) to create a div with the class `line_comment_container`. Put the labeled content inside it.
+</div>
 ## The CSS
 
 {% include lineComments.html %}
