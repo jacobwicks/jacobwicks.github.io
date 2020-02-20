@@ -98,10 +98,13 @@ const positionAllComments = reposition => {
     const wrapper = document.getElementsByClassName('wrapper')[0];
     //we use the width of wrapper as the basis for calculating how wide to make the comments
     const wrapperWidth = wrapper.offsetWidth;
+    //get the distance between the left side of the wrapper and the edge of the screen
+    const wrapperLeft = getOffsetLeft(wrapper);
 
     //calculate commentWidth
     //commentWidth will be reduced later if the screen width is narrow
-    let commentWidth = wrapperWidth * 0.5;
+    let commentWidth =
+        wrapperWidth * 0.5 > wrapperLeft ? wrapperLeft : wrapperWidth * 0.5;
 
     //get all lineComments from the document
     //getElementsByClassName returns an HTMLCollection
@@ -194,6 +197,7 @@ const positionAllComments = reposition => {
             const topOffset = getOffsetTop(targetLine);
 
             //set the position of the comment
+            console.log(`commentWidth`, commentWidth, wrapperWidth);
             comment.style.width = `${commentWidth}px`;
             comment.style.top = `${topOffset}px`;
             comment.style.left = `${leftOffset - commentWidth - 48}px`;
@@ -253,7 +257,6 @@ const positionAllComments = reposition => {
 //resize events can happen repeatedly, don't want to run the code that many times
 const debouncedPositionAllComments = debounce(positionAllComments);
 
-//when page has been resized, position all comments once
 //the event listener passes the event as an argument,
 //so the parameter reposition will be true
 window.addEventListener('resize', debouncedPositionAllComments);

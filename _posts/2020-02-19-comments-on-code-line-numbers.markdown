@@ -289,7 +289,7 @@ The [HTMLElement.offsetParent](https://developer.mozilla.org/en-US/docs/Web/API/
 There's a similar function that finds the leftOffset, which is how far from the left side of the screen an element is.
 
 # Adding Classes to Style the lineComment
-This code adds a label and some styling to the content of the lineComment. This code will only run when the page loads, because `reposition` will be falsy. When the page is resized, `reposition` will be truthy and this code will not be executed again. 
+This code adds a label and some styling to the content of the lineComment. This code will only run when the page loads, because `positionAllComments` will be called with a falsy value for `reposition`. When the page is resized, `reposition` will be truthy and this code will not be executed again. 
 
 {% highlight javascript linenos %}
             //first time through add the line label and content div inside the comment
@@ -349,6 +349,237 @@ If there is a next comment in the `blockComments` array, find its line number so
 <div class = "lineComment" id="block.6.line.36">
 Use a [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) to create a div with the class `line_comment_container`. Put the labeled content inside it.
 </div>
-## The CSS
 
+# Run on Page Load
+To run positionAllComments when the page load, make an Immediately Invoked Function Expression ([IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE)). The code inside the curly brackets will be executed when the page loads, so when the page loads it will call `positionAllComments`. Notice that we are calling `positionAllComments` with the `reposition` argument undefined, so all the code that is supposed to run when the page loads will run.
+
+{% highlight javascript %}
+{
+    positionAllComments();
+}
+{% endhighlight %}
+
+# Listen for Page Resize
+Running `positionAllComments` when the page loads will put the comments in the right place when the page loads for the first time. But to make the comments stay in the right place when the user resizes the page, we need to listen for the resize event. Use [addEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) to listen for the resize event happening on the window.
+
+{% highlight javascript %}
+//a debounced function handles repeated calls by waiting until the calls stop
+//then calling itself once
+//resize events can happen repeatedly, don't want to run the code that many times
+const debouncedPositionAllComments = debounce(positionAllComments);
+
+//the event listener passes the event as an argument,
+//so the parameter reposition will be true
+window.addEventListener('resize', debouncedPositionAllComments);
+{% endhighlight %}
+
+Resizing the page can fire the event listener many times very quickly. Running complicated code many times in a row can cause the page to slow down or not work right. So the event listener isn't calling `positionAllComments`. It is calling the variable `debouncedPositionAllComments`. This is a 'debounced' version of the `positionAllComments` function.  
+
+[Debouncing](https://www.geeksforgeeks.org/debouncing-in-javascript/) is when you make sure that repeated, quick calls to a function only end up calling that function a single time. By passing a debounced version of `positionAllComments` to the event listener, we make sure that `positionAllComments` only gets called once when the user resizes the window. If we didn't debounce it, `positionAllComments` might get called hundreds of times a second, which would cause the page to slow down. In the full source code you can see the `debounce` function that we call to create the debounced version of `positionAllComments`. 
+
+## The CSS
+We use CSS to accomplish several things. We use CSS to set the background color of the comment, create the shaft and head of the arrow pointing the line number, and collapse and expand the comments when the user hovers over them. 
+
+[This article on CSS-Tricks.com](https://css-tricks.com/using-css-transitions-auto-dimensions/) explains the different ways of using CSS to animate changes in the height of an element where the height is automatically determined based on the size of the element's content. Each method has some benefits and some drawbacks. I chose to use `max-height` because it works well enough for this application and involves very few lines of code.
+
+# The Line Height Variable
+{% highlight css %}
+/* declaring a variable lh as 1.4rem, or 1.4 times the height of a single line of text
+line-height is equal to the value of the variable lh */
+html {
+    --lh: 1.4rem;
+    line-height: var(--lh);
+}
+{% endhighlight %}
+
+Here we declare a [CSS variable](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) `lh`. By declaring `lh` as a CSS variable, we can refer back to it throughout the CSS. We can use `lh` in calculations.
+
+`lh` is equal to 1.4 `rem`. The [CSS unit `rem`](https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units) is the font size of the root element of the document. This basically means it's how tall in pixels the font characters will be. Multiplying `rem` by 1.4 gives us a height value that accounds for one character in height plus white space above and below it.  
+
+We'll use `lh` later to set the collapsed height of the comments to either 3 lines or 1 line, depending on if there are other comments close by.
+
+# Line Comment Container, Before and After
+This section of CSS specifies the properties for the `line_comment_container` class. We use the `before` pseudo element to make the shaft of the arrow that points at the assigned line number. We use the `after` pseudo element to make the point of the arrow that points at the assigned line number.
+
+{% highlight css linenos %}
+/* the before element of the line_comment_container
+creates the shaft of the arrow pointing at the line number */
+.line_comment_container::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 10px solid;
+    border-bottom: 10px solid;
+    border-left: 25px solid;
+    border-right: 20px solid;
+    border-color: gray;
+    position: absolute;
+    right: -20px;
+    top: 0px;
+}
+
+/* the line comment container holds the contents 
+and displays the background color 
+its default state is collapsed, displaying a maximum of 3 lines of text
+max-height is set to 3 * the lh variable*/
+.line_comment_container {
+    border-top: medium solid white;
+    position: absolute;
+    background-color: gray;
+    text-align: left;
+    border-radius: 6px;
+    padding: 5px;
+    max-height: calc(var(--lh) * 3);
+    transition: max-height 1s ease-out;
+}
+
+/* the after element of the line_comment_container 
+creates the point of the arrow pointing at the line number */
+.line_comment_container::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 30px solid gray;
+    position: absolute;
+    right: -50px;
+    top: -10px;
+}
+{% endhighlight %}
+
+<div class = "lineComment" id="block.7.line.7">
+Setting each of the border properties forms a rectangle. 
+</div>
+
+<div class = "lineComment" id="block.7.line.13">
+The body of the arrow is placed 20 pixels back from the right side of the comment. 
+</div>
+
+<div class = "lineComment" id="block.7.line.22">
+Setting the border-top to white makes the separation between comments visible when they overlap. Overlap will occur if there is a comment on the line after another comment.
+</div>
+
+
+<div class = "lineComment" id="block.7.line.28">
+The [CSS calc() function](https://developer.mozilla.org/en-US/docs/Web/CSS/calc) lets you perform calculations inside CSS property values. `max-height` is set to three times the value of the `lh` variable, or 3 lines of text plus whitespace.
+</div>
+
+<div class = "lineComment" id="block.7.line.29">
+The [transition property](https://developer.mozilla.org/en-US/docs/Web/CSS/transition) allows you to control how an element will change appearance when a property of the element changes. This line says that when the `max-height` property changes, it should take 1 second to change, and `ease-out` is an animation that starts slow and ends slow, moving faster in the middle.  
+</div>
+
+<div class = "lineComment" id="block.7.line.38">
+Setting `border-left` to gray and `border-top` and `border-bottom` to transparent creates a triangle pointing right.
+</div>
+
+<div class = "lineComment" id="block.7.line.42">
+The head of the arrow is position to the right of the `line_comment_container`.
+</div>
+
+# Hover Effects
+When the user hovers the mouse over a comment, comment expands to the height of its content, the background gets lighter, and the arrow turns green. 
+{% highlight css linenos %}
+/* when the user hovers over the line_comment_container
+max-height is set to 100% of the viewport height*/
+.line_comment_container:hover {
+    background-color: lightgray;
+    max-height: 100vh;
+    z-index: 99;
+}
+
+/* the point of the arrow turns green */
+.line_comment_container:hover:after {
+    border-left: 30px solid green;
+}
+
+/* the body of the arrow turns green */
+.line_comment_container:hover:before {
+    border-color: green;
+}
+{% endhighlight %}
+<div class = "lineComment" id="block.8.line.6">
+Setting the z-index puts the hovered comment on top of any other comments it may overlap.
+</div>
+
+# The Content
+The `line_comment_content` class controls the max-height of the content of the comment. We need to have this separate class for the content of the comment because we use `overflow: hidden` to hide any text that goes past the `max-height`. If we set `overflow: hidden` on the `line_comment_container`, then the `before` and `after` pseudo elements wouldn't show up because we render them outside of the body of the `line_comment_container` to create the pointing arrow effect.
+
+{% highlight css linenos %}
+/* the content of the comment 
+    max-height starts at three lines collapsed */
+.line_comment_content {
+    position: relative;
+    max-height: calc(var(--lh) * 3);
+    transition: max-height 1s ease-out;
+    overflow: hidden;
+    padding-right: 1rem;
+}
+
+/* when hovered, max height becomes 100% of the viewport height */
+.line_comment_content:hover {
+    max-height: 100vh;
+}
+{% endhighlight %}
+<div class = "lineComment" id="block.9.line.13">
+On `hover` `max-height` is set to `100vh`, or 100% of the height of the viewport. The CSS `vh` unit is equal to 1% of the height of the viewport. The viewport is the browser window size.
+</div>
+
+## Make lineComments Work On Your Jekyll Blog
+To make lineComments work on your Jekyll Blog, you need to do 4 things.
+
+# Tell Jekyll to Parse Markdown Inside of HTML Elements
+add the following lines to the _config.yml file:
+```
+markdown: kramdown
+kramdown:
+    parse_block_html: true
+```
+
+[kramdown](https://kramdown.gettalong.org/) is what Jekyll uses to parse markdown.
+[parse_block_html](https://kramdown.gettalong.org/parser/kramdown.html#options) tells kramdown to parse markdown in block HTML tags.
+
+# Put lineComments.css and lineComments.js in the Assets Folder of the Jekyll Blog
+If you don't already have a folder named assets in the root folder of your Jekyll Blog, then create one.
+
+Save lineComments.css into the assets folder. lineComments.css has all the CSS that makes the comments work.
+
+Save lineComments.js into the assets folder. lineComments.js has all the JavaScript that makes the comments work.
+
+# Put lineComments.html into the _includes Folder of the Jekyll Blog
+If you don't already have a folder named _includes in the root folder of your Jekyll Blog, then create one.
+
+Save lineComments.html into the _includes folder. lineComments.html brings lineComments.css in as a stylesheet, and lineComments.js in as a script.
+
+{% highlight html %}
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="/assets/lineComments/lineComments.css"
+/>
+<script src="/assets/lineComments/lineComments.js"></script>
+{% endhighlight %}
+
+# Add the Include Tag to the Bottom of Any Post that You Want lineComments in
+Add this line to the bottom of any post that you want to use lineComments in. It has to be at the bottom of the post so that the JavaScript runs after the comment divs are rendered to the page.
+
+```
+{% include lineComments.html %}
+``` 
+
+## Now You Can Use lineComments in Your Jekyll Blog 
+To write a lineComment you need to put the comment inside of a div. Assign the div the class "lineComment". Give the div an id in the correct form. The correct id form is "block.#.line.#" where the # symbols are the desired block number and line number.
+
+```
+<div class = "lineComment" id="block.2.line.17">
+Like this
+</div>;
+```
+The div content **MUST** not start on the same as the div opening tag. You have to have a linebreak. If you start typing the content on the same line as the div opening tag Jekyll won't parse it correctly.
+```
+<div class = "lineComment" id="block.2.line.17"> This won't work!
+</div>;
+```
+
+That's it!
 {% include lineComments.html %}
