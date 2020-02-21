@@ -37,29 +37,44 @@ When the page is rendered we run a JavaScript function to find each code block a
 
 Finally, we use JavaScript to listen for the page resize event. When the page resizes, we run the code to position each comment again. That way the comments will stay in the correct position if the user resizes the page.
 
-# Liquid Tags
+# Source Code
+The explanations on this page go over the important code. But it doesn't cover everything. The complete source code can be found at the links below.
+
+CSS:
+[https://github.com/jacobwicks/lineComments/blob/master/lineComments.css](https://github.com/jacobwicks/lineComments/blob/master/lineComments.css)
+
+HTML:
+[https://github.com/jacobwicks/lineComments/blob/master/lineComments.html](https://github.com/jacobwicks/lineComments/blob/master/lineComments.html)
+
+JavaScript:
+[https://github.com/jacobwicks/lineComments/blob/master/lineComments.js](https://github.com/jacobwicks/lineComments/blob/master/lineComments.js)
+
+# Highlighting Code with Liquid Tags
 When you type a code block in a Jekyll post, you can tell Jekyll to highlight the code block using [Liquid Tags](https://jekyllrb.com/docs/liquid/tags/). Liquid Tags are inside curly brackets and percent signs. The starting and ending Liquid Tags for highlighting JavaScript look like this:
 
+```
 {% raw %} 
-{% highlight javascript %} <br/>
-const helloWorld = () => console.log('Hello World!'); <br/>
+{% highlight javascript %}
+const helloWorld = () => console.log('Hello World!');
 {% endhighlight %}
 {% endraw %}
+```
 
 That will render on the page as this:
 {% highlight javascript %} const helloWorld = () => console.log('Hello World!'); 
 {% endhighlight %}
 
 To add line numbers, you add 'linenos' to the opening tag:
+```
 {% raw %} 
 {% highlight javascript linenos %}
 {% endraw %}
-
+```
 That will render on the page as this:
 {% highlight javascript linenos %} const helloWorld = () => console.log('Hello World!'); 
 {% endhighlight %}
 
-If you inspect the page, you can see the line numbers sitting inside of a &lt;pre&gt; element:<br/><br/>
+If you inspect the page, you can see the line numbers sitting inside of a &lt;pre&gt; element. You can inspect the page using your browser's console, or on some browsers there is an 'inspect element' item in the right click menu.<br/><br/>
 ![inspecting the lineno element](/assets//images/lineno.png)
 
 And here's what it would look like if we had 9 lines of code instead of just 1:
@@ -68,9 +83,9 @@ And here's what it would look like if we had 9 lines of code instead of just 1:
 These line numbers are what we want the comment boxes to line up with.
 
 ## The JavaScript
-We use JavaScript and CSS to create the comment boxes. First let's look at the JavaScript. After that, I'll explain how the CSS works.
+We use JavaScript and CSS to create the comment boxes. First let's look at the JavaScript. After that, I'll explain how the CSS works. Then I will tell you how to add it to your Jekyll site.
 
-Most of the JavaScript is inside of a function called `positionAllComments`. On this page, I'll explain the major parts of `positionAllComments` and some of the important helper functions. If you want to see all of the JavaScript, you can look at the [source code here](). There are a few pieces of code that should only run when the page is loaded.  So `positionAllComments` takes one argument, `reposition`.  When the page is loaded, `positionAllComments` is invoked with `reposition` undefined. When the page is resized, `positionAllComments` is invoked with `reposition` true. So some code will only be executed if `reposition` is false. That code will only run when the page is loaded, not each time the user resizes the page. 
+Most of the JavaScript is inside of a function called `positionAllComments`. On this page, I'll explain the major parts of `positionAllComments` and some of the important helper functions. If you want to see all of the JavaScript, you can look at the [source code here](https://github.com/jacobwicks/lineComments/blob/master/lineComments.js). There are a few pieces of code that should only run when the page is loaded.  So `positionAllComments` takes one argument, `reposition`.  When the page is loaded, `positionAllComments` is invoked with `reposition` undefined. When the page is resized, `positionAllComments` is invoked with `reposition` true. So some code will only be executed if `reposition` is false. That code will only run when the page is loaded, not each time the user resizes the page. 
 
 # Use JavaScript to Add Ids so You Can Find the Line Numbers
 This code finds each element that has the 'lineno' class. Then it adds a div with an id to each line number inside each 'lineno' element.
@@ -131,24 +146,28 @@ Each line number can be found by using [document.getElementById](https://develop
 
 # Writing a lineComment
 Jekyll posts may contain HTML tags. They will render on the page normally. To write a lineComment the user has to write a div, assign the div the class "lineComment", and give the div an id. The id will contain the block number and the line number, separated by periods. We'll use JavaScript to find lineComments, and split the id property to find the assigned block number and line number.
+```
+{% raw %}
+<div class = "lineComment" id="block.2.line.17">
+Comment content goes here.
+</div>
+{% endraw %}
+```
 
-&lt;div class = "lineComment" id="block.2.line.17"&gt; <br/>
-Comment content goes here. It can be *formatted* using **markdown** `even though it's inside a div`. <br/>
-&lt;/div&gt;
-
-# Make Jekyll Render Markdown Inside of HMTL
-HTML in Jekyll may contain markdown. To tell Jekyll to render markdown inside HTML elements, add the following lines to the _config.yml file:
+# Make Jekyll Parse Markdown Inside of HMTL
+HTML in Jekyll may contain markdown. To tell Jekyll to parse markdown inside HTML elements, add the following lines to the _config.yml file:
 ```
 markdown: kramdown
 kramdown:
     parse_block_html: true
 ```
+In a default Jekyll setup, the _config.yml file is in the root directory of the Jekyll site.
 
 [kramdown](https://kramdown.gettalong.org/) is what Jekyll uses to parse markdown.
 [parse_block_html](https://kramdown.gettalong.org/parser/kramdown.html#options) tells kramdown to parse markdown in block HTML tags.
 
 # Find Each Code BLock That Has Line Numbers
-To assign the comments to the correct blocks and line numbers, we first need to find each code block that has line numbers.
+To assign the comments to the correct blocks and line numbers, we first need to find each code block that has line numbers. We'll assign the array of code blocks to `codeBlocks`.
 
 {% highlight javascript %}
     const codeBlocks = [...document.getElementsByClassName('lineno')];
@@ -158,7 +177,7 @@ To assign the comments to the correct blocks and line numbers, we first need to 
 
 Use the [spread operator ...](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax) inside of a pair of angle brackets to make the array-like object into a JavaScript array.
 
-Now we have an array that contains a reference to the 'lineno' element from each code block with line numbers. Inside those elements are the divs with line numbers that we created earlier.
+Now we have the array `codeBlocks` that contains a reference to the 'lineno' element from each code block with line numbers. Inside those elements are the divs with line numbers that we created earlier.
 
 # Find Each lineComment div
 Finding all the lineComment divs the user created is similar to finding all the code blocks with line numbers.
@@ -170,7 +189,7 @@ Finding all the lineComment divs the user created is similar to finding all the 
 `comments` is an array that contains all the lineComments in the post. We'll filter the `comments` array to find all the comments assigned to a particular code block.
 
 # For Every Code Block, Find All the Assigned Comments
-We'll find all the comments assigned to a particular block and put them in an array named `blockComments`. Once we have `blockComments`, we can add styling to each comment inside `blockComments`. We will also set the position.
+We'll find all the comments assigned to a particular block and put them in an array named `blockComments`. Once we have `blockComments`, we can add styling to each comment inside `blockComments`. We will also set the position of each comment.
 
 {% highlight javascript linenos %}
         //get the highest line number from the codeBlock
@@ -255,7 +274,7 @@ The `getOffsetTop` function finds how far the element is from the top of the pag
 
 # Using Offsets To Find the Position of a Line Number div On the Page
 
-To line the comments up with a div, we need to know where the top of that div is. Here's the function that takes an element and returns the top offset, which is how far in pixels the top of the element is from the top page. Because the offsetTop property of each element tells us what its top offset is relative to the parent of that element, we have to add the offset of all the parent elements together to get the correct number. Use a while loop to loop through each parent of the element.
+To line the comments up with a div, we need to know where the top of that div is. Here's the function that takes an element and returns the top offset, which is how far in pixels the top of the element is from the top page. Because the offsetTop property of each element tells us what its top offset is relative to the parent of that element, we have to add the offset of all the parent elements together to get the correct number. Use a [while loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/while) to loop to go through each parent of the element.
 
 {% highlight javascript linenos %}
 //takes an element and returns the top offset property
@@ -286,7 +305,7 @@ const getOffsetTop = element => {
 The [HTMLElement.offsetParent](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent) property of an element returns a reference to the nearest parent element.
 </div>
 
-There's a similar function that finds the leftOffset, which is how far from the left side of the screen an element is.
+There's a similar function that finds the leftOffset, which is how far from the left side of the screen an element is. You can see that function in the full source code.
 
 # Adding Classes to Style the lineComment
 This code adds a label and some styling to the content of the lineComment. This code will only run when the page loads, because `positionAllComments` will be called with a falsy value for `reposition`. When the page is resized, `reposition` will be truthy and this code will not be executed again. 
@@ -351,7 +370,7 @@ Use a [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript
 </div>
 
 # Run on Page Load
-To run positionAllComments when the page load, make an Immediately Invoked Function Expression ([IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE)). The code inside the curly brackets will be executed when the page loads, so when the page loads it will call `positionAllComments`. Notice that we are calling `positionAllComments` with the `reposition` argument undefined, so all the code that is supposed to run when the page loads will run.
+To run positionAllComments when the page load, make an [Immediately Invoked Function Expression (IIFE)](https://developer.mozilla.org/en-US/docs/Glossary/IIFE). In ES2015, curly a standalone pair of curly brackets creates an IIFE. The code inside the curly brackets will be executed when the page loads, so when the page loads it will call `positionAllComments()`. Notice that we are calling `positionAllComments` with the `reposition` argument undefined, so all the code that is supposed to run when the page loads will run.
 
 {% highlight javascript %}
 {
@@ -376,6 +395,8 @@ window.addEventListener('resize', debouncedPositionAllComments);
 Resizing the page can fire the event listener many times very quickly. Running complicated code many times in a row can cause the page to slow down or not work right. So the event listener isn't calling `positionAllComments`. It is calling the variable `debouncedPositionAllComments`. This is a 'debounced' version of the `positionAllComments` function.  
 
 [Debouncing](https://www.geeksforgeeks.org/debouncing-in-javascript/) is when you make sure that repeated, quick calls to a function only end up calling that function a single time. By passing a debounced version of `positionAllComments` to the event listener, we make sure that `positionAllComments` only gets called once when the user resizes the window. If we didn't debounce it, `positionAllComments` might get called hundreds of times a second, which would cause the page to slow down. In the full source code you can see the `debounce` function that we call to create the debounced version of `positionAllComments`. 
+
+When the `eventListener` calls `debouncedPositionAllComments`, it automatically passes the event object as an argument to `debouncedPositionAllComments`. `debouncePositionAllComments` calls `positionAllComments`. `positionAllComments` will read the event object as its parameter `reposition`, so `reposition` will have a truthy value. That will stop the code that is only supposed to execute when `reposition` is falsy from executing.  
 
 ## The CSS
 We use CSS to accomplish several things. We use CSS to set the background color of the comment, create the shaft and head of the arrow pointing the line number, and collapse and expand the comments when the user hovers over them. 
@@ -540,7 +561,9 @@ kramdown:
 [parse_block_html](https://kramdown.gettalong.org/parser/kramdown.html#options) tells kramdown to parse markdown in block HTML tags.
 
 # Put lineComments.css and lineComments.js in the Assets Folder of the Jekyll Blog
-If you don't already have a folder named assets in the root folder of your Jekyll Blog, then create one.
+If you don't already have a folder named `assets` in the root folder of your Jekyll Blog, then create one.
+
+Create a folder named `lineComments` inside the assets folder.
 
 Save lineComments.css into the assets folder. lineComments.css has all the CSS that makes the comments work.
 
