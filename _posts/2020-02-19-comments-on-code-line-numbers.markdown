@@ -370,7 +370,7 @@ Use a [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript
 </div>
 
 # Run on Page Load
-To run positionAllComments when the page load, make an [Immediately Invoked Function Expression (IIFE)](https://developer.mozilla.org/en-US/docs/Glossary/IIFE). In ES2015, curly a standalone pair of curly brackets creates an IIFE. The code inside the curly brackets will be executed when the page loads, so when the page loads it will call `positionAllComments()`. Notice that we are calling `positionAllComments` with the `reposition` argument undefined, so all the code that is supposed to run when the page loads will run.
+To run positionAllComments when the page load, make an [Immediately Invoked Function Expression (IIFE)](https://developer.mozilla.org/en-US/docs/Glossary/IIFE). In ES2015, a standalone pair of curly brackets creates an IIFE. The code inside the curly brackets will be executed when the page loads, so when the page loads it will call `positionAllComments()`. Notice that we are calling `positionAllComments` with the `reposition` argument undefined, so all the code that is supposed to run when the page loads will run.
 
 {% highlight javascript %}
 {
@@ -565,14 +565,14 @@ If you don't already have a folder named `assets` in the root folder of your Jek
 
 Create a folder named `lineComments` inside the assets folder.
 
-Save lineComments.css into the assets folder. lineComments.css has all the CSS that makes the comments work.
+Save lineComments.css in the folder assets/lineComments/. lineComments.css has all the CSS that makes the comments work.
 
-Save lineComments.js into the assets folder. lineComments.js has all the JavaScript that makes the comments work.
+Save lineComments.js in the folder assets/lineComments/. lineComments.js has all the JavaScript that makes the comments work.
 
 # Put lineComments.html into the _includes Folder of the Jekyll Blog
-If you don't already have a folder named _includes in the root folder of your Jekyll Blog, then create one.
+If you don't already have a folder named _includes in the root folder of your Jekyll Blog, then create one. [Jekyll includes](https://jekyllrb.com/docs/includes/) let you use Liquid Tags to include contents from a file in the _includes folder.
 
-Save lineComments.html into the _includes folder. lineComments.html brings lineComments.css in as a stylesheet, and lineComments.js in as a script.
+Save lineComments.html in the _includes folder. lineComments.html brings lineComments.css in as a stylesheet, and lineComments.js in as a script. This is what is in lineComments.html:
 
 {% highlight html %}
 <link
@@ -587,7 +587,9 @@ Save lineComments.html into the _includes folder. lineComments.html brings lineC
 Add this line to the bottom of any post that you want to use lineComments in. It has to be at the bottom of the post so that the JavaScript runs after the comment divs are rendered to the page.
 
 ```
+{% raw %}
 {% include lineComments.html %}
+{% endraw %}
 ``` 
 
 ## Now You Can Use lineComments in Your Jekyll Blog 
