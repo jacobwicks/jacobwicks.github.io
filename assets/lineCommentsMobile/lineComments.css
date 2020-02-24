@@ -37,6 +37,7 @@ max-height is set to 3 * the lh variable*/
 }
 
 .line_comment_container.mobile {
+    border-top: none;
     background-color: lightgray;
 }
 .line_comment_container.mobile:after {
