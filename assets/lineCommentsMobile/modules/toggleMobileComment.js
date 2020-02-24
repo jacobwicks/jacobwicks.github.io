@@ -2,7 +2,6 @@ import { getCSSLineHeight } from './getCSSLineHeight.js';
 import { getOffsetTop } from './getOffsetTop.js';
 import { getLineNumber } from './getLineNumber.js';
 import { getBlockNumber } from './getBlockNumber.js';
-import { getOffsetLeft } from './getOffsetLeft.js';
 
 const getLineNumberDivFromComment = comment => {
     const lineNumber = getLineNumber(comment);

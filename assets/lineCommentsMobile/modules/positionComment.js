@@ -26,6 +26,9 @@ export const positionComment = ({
         //it is calculated in the position all comments function
         comment.style.width = `${postWidth - 10}px`;
         comment.style.top = `${topOffset + lineHeight}px`;
+
+        //change the width of the content div
+        comment.childNodes[0].style.width = `${postWidth - 20}px`;
     } else {
         comment.style.width = `${commentWidth}px`;
         comment.style.top = `${topOffset}px`;

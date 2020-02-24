@@ -1,8 +1,6 @@
 //adds a label span to the content string from a Jekyll post paragraph
-export const addLabelToContent = ({ content, isMobile, label }) => {
-    const labelSpan = isMobile
-        ? `<span class="line_label mobile">${label}: </span>`
-        : `<span class="line_label">${label}: </span>`;
+export const addLabelToContent = ({ content, label }) => {
+    const labelSpan = `<span class="line_label">${label}: </span>`;
 
     //use trim to remove whitespace from innerHTML
     const trimmed = content.trim();
