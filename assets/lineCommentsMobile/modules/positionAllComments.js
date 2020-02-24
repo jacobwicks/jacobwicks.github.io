@@ -1,4 +1,5 @@
 import { debounce } from './debounce.js';
+import { closeAllComments } from './toggleMobileComment.js';
 import { getBlockComments } from './getBlockComments.js';
 import { getCSSLineHeight } from './getCSSLineHeight.js';
 import { getOffsetLeft } from './getOffsetLeft.js';
@@ -9,8 +10,7 @@ import { setupCodeBlocks } from './setupCodeBlocks.js';
 //finds all elements with the lineComment class
 //positions them next to their assigned code block and line number
 //if reposition is false, it's the first time, so it adds some interior elements to make content display correctly
-export const positionAllComments = reposition => {
-    const isMobile = true;
+export const positionAllComments = ({ isMobile, reposition }) => {
     //wrapper is an element added by Jekyll
     const wrapper = document.getElementsByClassName('wrapper')[0];
     //we use the width of wrapper as the basis for calculating how wide to make the comments
@@ -39,6 +39,9 @@ export const positionAllComments = reposition => {
 
         //find all comments assigned to invalid block numbers
         identifyInvalidCommentAssignments({ codeBlocks, comments });
+
+        //if it's mobile, all the comments start out closed
+        isMobile && closeAllComments();
     }
 
     //get the value of CSS variable lineHeight

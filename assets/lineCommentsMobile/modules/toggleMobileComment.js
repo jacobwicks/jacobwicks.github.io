@@ -40,9 +40,13 @@ const closeComment = comment => {
 };
 
 export const closeAllComments = () => {
-    //find all comments and remove the 'open' class from them
+    //find all validly assigned comments and close them so the user doesn't see them
     const comments = [...document.getElementsByClassName('lineComment')];
-    comments.forEach(comment => closeComment(comment));
+    comments.forEach(
+        comment =>
+            !comment.classList.contains('invalid_assignment') &&
+            closeComment(comment)
+    );
 };
 
 export const closeAllCommentsExcept = keepOpen => {
