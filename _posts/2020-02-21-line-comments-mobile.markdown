@@ -11,6 +11,7 @@ In my [last post]({% post_url 2020-02-19-comments-on-code-line-numbers %}), I us
 Here's a block of code with line numbers and a comment pointing to line 7:
 
 {% highlight javascript linenos %}
+blockTitle: my first block
 //takes an element and returns the top offset property
 //the distance from the top of the screen in pixels
 //calculates by recursively adding the top offset of each parent element
