@@ -10,7 +10,8 @@ import mobilecheck from './modules/mobileCheck.js';
     const getWindowWidth = () =>
         Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 
-    const initialWindowWidth = getWindowWidth();
+    //store the previous value of the window width so we can check for resize events
+    let prevWindowWidth = getWindowWidth();
 
     //true if the user has a mobile browser
     const isMobile = mobilecheck();
@@ -18,6 +19,7 @@ import mobilecheck from './modules/mobileCheck.js';
     //set the initial position and format of all comments
     positionAllComments({
         isMobile,
+        setup: true,
     });
 
     //listen for resize
@@ -26,10 +28,17 @@ import mobilecheck from './modules/mobileCheck.js';
     //so check width difference
     //without this check, the mobile comments disappear when you scroll up
     window.addEventListener('resize', () => {
-        if (getWindowWidth() !== initialWindowWidth)
+        const currentWindowWidth = getWindowWidth();
+
+        //the check for a change in window width
+        if (currentWindowWidth !== prevWindowWidth) {
+            //store the current window width
+            prevWindowWidth = currentWindowWidth;
+
+            //call the debounced version of positionAllComments
             debouncedPositionAllComments({
                 isMobile,
-                reposition: true,
             });
+        }
     });
 }

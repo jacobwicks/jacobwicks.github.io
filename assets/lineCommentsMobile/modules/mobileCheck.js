@@ -1,3 +1,5 @@
+//checks if the device is a mobile device
+//returns boolean
 //https://stackoverflow.com/a/11381730
 //http://detectmobilebrowsers.com/
 const mobilecheck = () => {

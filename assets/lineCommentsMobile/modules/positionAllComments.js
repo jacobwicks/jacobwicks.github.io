@@ -1,5 +1,5 @@
 import { debounce } from './debounce.js';
-import { closeAllComments } from './toggleMobileComment.js';
+import { closeAllComments } from './closeComments.js';
 import { getBlockComments } from './getBlockComments.js';
 import { getCSSLineHeight } from './getCSSLineHeight.js';
 import { getOffsetLeft } from './getOffsetLeft.js';
@@ -9,19 +9,25 @@ import { setupCodeBlocks } from './setupCodeBlocks.js';
 
 //finds all elements with the lineComment class
 //positions them next to their assigned code block and line number
-//if reposition is false, it's the first time, so it adds some interior elements to make content display correctly
-export const positionAllComments = ({ isMobile, reposition }) => {
+//if setup is true, it's the first time, so it adds some interior elements to make content display correctly
+export const positionAllComments = ({ isMobile, setup }) => {
     //wrapper is an element added by Jekyll
     const wrapper = document.getElementsByClassName('wrapper')[0];
     //we use the width of wrapper as the basis for calculating how wide to make the comments
-    const wrapperWidth = wrapper.offsetWidth;
+    const halfWrapperWidth = Math.floor(wrapper.offsetWidth * 0.5);
     //get the distance between the left side of the wrapper and the edge of the screen
     const wrapperLeft = getOffsetLeft(wrapper);
 
     //calculate commentWidth
-    //commentWidth will be reduced later if the screen width is narrow
-    let commentWidth =
-        wrapperWidth * 0.5 > wrapperLeft ? wrapperLeft : wrapperWidth * 0.5;
+    // prettier-ignore
+    let commentWidth = isMobile
+    //on mobile, it's as wide as the post element created by jekyll
+    ? document.querySelector('.post-content, .e-content').offsetWidth
+    : //on desktop, it's the greater of 1/2 the wrapper width or the whole left offset of the wrapper
+    //this will be reduced later if the screen width is very narrow
+        halfWrapperWidth > wrapperLeft
+            ? wrapperLeft
+            : halfWrapperWidth;
 
     //get all lineComments from the document
     //getElementsByClassName returns an HTMLCollection
@@ -33,7 +39,7 @@ export const positionAllComments = ({ isMobile, reposition }) => {
     const codeBlocks = [...document.getElementsByClassName('lineno')];
 
     //first time through
-    if (!reposition) {
+    if (setup) {
         //set up the code blocks- add divs and ids to the line numbers
         setupCodeBlocks({ codeBlocks, comments, isMobile });
 
@@ -45,30 +51,12 @@ export const positionAllComments = ({ isMobile, reposition }) => {
     }
 
     //get the value of CSS variable lineHeight
-    //this is computed in the .css file
-    //returns a string number followed by 'px', slice off the px
+    //this is computed by the .css processor
     const lineHeight = getCSSLineHeight();
-
-    parseInt(
-        getComputedStyle(document.body)
-            .getPropertyValue('line-height')
-            .slice(0, -2)
-    );
 
     // for each code block element with line numbers
     codeBlocks.forEach((codeBlock, blockIndex) => {
-        //find the td element that holds the code inside this code block
-        //jekyll generates this td element
-        const innerCodeElement = document.getElementsByClassName('code')[
-            blockIndex
-        ];
-
-        //compute the style of the post width element created by jekyll
-        //on mobile, the comment container will this wide
-        const postWidth = document.querySelector('.post-content, .e-content')
-            .offsetWidth;
-
-        //filter all comments to find the comments that are supposed to go in this block
+        //get the comments that are supposed to go in this block
         const blockComments = getBlockComments({
             blockIndex,
             codeBlock,
@@ -76,13 +64,11 @@ export const positionAllComments = ({ isMobile, reposition }) => {
         });
 
         //get the left offset to position the comments horizontally
-        const leftOffset = isMobile
-            ? getOffsetLeft(innerCodeElement)
-            : getOffsetLeft(codeBlock);
+        const leftOffset = getOffsetLeft(codeBlock);
 
-        //commentWidth is used for the desktop layout, not used on mobile
+        //for the desktop layout
         //if comments are wider than the offset, they'll appear partially offscreen
-        if (commentWidth > leftOffset && leftOffset > 50) {
+        if (!isMobile && commentWidth > leftOffset && leftOffset > 50) {
             //set commentWidth to offset minus 50 to keep comment onscreen
             commentWidth = leftOffset - 50;
         }
@@ -96,7 +82,6 @@ export const positionAllComments = ({ isMobile, reposition }) => {
                 isMobile,
                 leftOffset,
                 lineHeight,
-                postWidth,
             });
         });
     });

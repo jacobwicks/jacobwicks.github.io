@@ -1,3 +1,5 @@
+//a debounced function handles repeated calls by waiting until the calls stop
+//then calling itself once
 export const debounce = (func, wait, immediate) => {
     let timeout;
     //the returned function needs to use this

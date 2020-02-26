@@ -651,4 +651,4 @@ The div content **MUST** not start on the same as the div opening tag. You have 
 ```
 
 That's it!
-{% include lineCommentsMobile.html %}
+{% include lineComments.html %}
