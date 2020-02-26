@@ -8,6 +8,7 @@ const addLineNumberDivsToBlock = ({
     blockIndex,
     codeBlock,
     isMobile,
+    removeLastNumber,
 }) => {
     //get the innerHTML of the code block
     const innerHTML = codeBlock.innerHTML;
@@ -49,6 +50,15 @@ const addLineNumberDivsToBlock = ({
         //add the div to the codeBlock
         codeBlock.appendChild(lineNumberDiv);
     });
+
+    //removeLastNumber is true when the block is named
+    //when the block is named, there's an extra line of code containing the block name
+    //the block name gets removed, so we also need to remove a lineNumber
+    if (removeLastNumber) {
+        const lineNumberToRemove =
+            codeBlock.children[codeBlock.children.length - 2];
+        codeBlock.removeChild(lineNumberToRemove);
+    }
 };
 
 //adds line number divs to each line number in all code blocks
@@ -56,6 +66,7 @@ export const addLineNumberDivsToAllBlocks = ({
     codeBlocks,
     comments,
     isMobile,
+    namedCodeBlocks,
 }) => {
     codeBlocks.forEach((codeBlock, blockIndex) => {
         //get all comments assigned to the block at blockIndex
@@ -66,12 +77,18 @@ export const addLineNumberDivsToAllBlocks = ({
             setup: true,
         });
 
+        //if this block is a named codeBlock, then remove the last lineNumber
+        const removeLastNumber = !!Object.values(namedCodeBlocks).includes(
+            blockIndex
+        );
+
         //add the line numbers to the block
         addLineNumberDivsToBlock({
             blockComments,
             blockIndex,
             codeBlock,
             isMobile,
+            removeLastNumber,
         });
     });
 };

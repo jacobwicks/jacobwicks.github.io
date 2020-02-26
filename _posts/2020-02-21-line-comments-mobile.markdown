@@ -11,7 +11,7 @@ In my [last post]({% post_url 2020-02-19-comments-on-code-line-numbers %}), I us
 Here's a block of code with line numbers and a comment pointing to line 7:
 
 {% highlight javascript linenos %}
-blockTitle: my first block
+blockName my first block
 //takes an element and returns the top offset property
 //the distance from the top of the screen in pixels
 //calculates by recursively adding the top offset of each parent element
@@ -25,7 +25,7 @@ return offsetTop;
 };
 {% endhighlight %}
 
-<div class = "lineComment" id="block.0.line.7">
+<div class = "lineComment" id="block.my first block.line.7">
 This is the code inside the while loop. It will execute as long as the variable `element` returns a truthy value. += is the addition assignment operator. Here, it is adding the value of the offSetTop property of the current element to the value of the variable named offsetTop.
 </div>
 
