@@ -4,6 +4,7 @@ import { getBlockComments } from './getBlockComments.js';
 import { getCSSLineHeight } from './getCSSLineHeight.js';
 import { getOffsetLeft } from './getOffsetLeft.js';
 import { identifyInvalidCommentAssignments } from './identifyInvalidCommentAssignments.js';
+import { parseCommentIds } from './parseCommentIds.js';
 import { positionComment } from './positionComment.js';
 import { setupCodeBlocks } from './setupCodeBlocks.js';
 
@@ -40,6 +41,9 @@ export const positionAllComments = ({ isMobile, setup }) => {
 
     //first time through
     if (setup) {
+        //parse the comment ids from JSON to block.#.line.# format
+        parseCommentIds(comments);
+
         //set up the code blocks- add divs and ids to the line numbers
         setupCodeBlocks({ codeBlocks, comments, isMobile });
 

@@ -29,6 +29,21 @@ return offsetTop;
 This is the code inside the while loop. It will execute as long as the variable `element` returns a truthy value. += is the addition assignment operator. Here, it is adding the value of the offSetTop property of the current element to the value of the variable named offsetTop.
 </div>
 
+
+<div class = "lineComment" id="{
+    block:0,
+    line: 10
+}">
+This one has a JSON id
+</div>
+
+<div class = "lineComment" id="{
+    block   :'my first block',
+    line : 1
+}">
+This one has a JSON id using the block name
+</div>
+
 This is what it looked like on desktop browsers:
 
 ![comments worked on desktop](/assets//images/2020-02-21/old-comments-on-desktop.png)
