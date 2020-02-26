@@ -44,7 +44,8 @@ export const positionAllComments = ({ isMobile, setup }) => {
         //parse the comment ids from JSON to block.#.line.# format
         parseCommentIds(comments);
 
-        //set up the code blocks- add divs and ids to the line numbers
+        //set up the code blocks- translate named blocks,
+        //add divs and ids to the line numbers
         setupCodeBlocks({ codeBlocks, comments, isMobile });
 
         //find all comments assigned to invalid block numbers
