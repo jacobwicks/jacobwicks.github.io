@@ -25,23 +25,11 @@ return offsetTop;
 };
 {% endhighlight %}
 
-<div class = "lineComment" id="block.my first block.line.7">
+<div class = "lineComment" id='{
+    block:my first block,
+    line: 7
+    }'>
 This is the code inside the while loop. It will execute as long as the variable `element` returns a truthy value. += is the addition assignment operator. Here, it is adding the value of the offSetTop property of the current element to the value of the variable named offsetTop.
-</div>
-
-
-<div class = "lineComment" id="{
-    block:0,
-    line: 10
-}">
-This one has a JSON id
-</div>
-
-<div class = "lineComment" id="{
-    block   :'75',
-    line : 1
-}">
-This one has a JSON id using the block name
 </div>
 
 This is what it looked like on desktop browsers:
@@ -316,6 +304,7 @@ const openComment = comment => {
 
 <!-- prettier-ignore -->
 {% highlight javascript linenos %}
+blockName animatedCloseComment
 export const animatedCloseComment = comment => {
     const lineNumberDiv = getLineNumberDivFromComment(comment);
     lineNumberDiv.classList.remove('selected');
@@ -330,5 +319,9 @@ export const animatedCloseComment = comment => {
 
 };
 {% endhighlight %}
+
+<div class="lineComment" id='{block :animatedCloseComment, line:  7  }'>
+here it is
+</div>
 
 {% include lineCommentsMobile.html %}
