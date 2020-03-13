@@ -2,7 +2,10 @@ import { getLineNumberDivFromComment } from './getLineNumberDivFromComment.js';
 
 const closeComment = comment => {
     const lineNumberDiv = getLineNumberDivFromComment(comment);
-    lineNumberDiv.classList.remove('selected');
+    if (lineNumberDiv) {
+        lineNumberDiv.classList.remove('selected');
+    }
+
     comment.style.display = 'none';
 };
 
@@ -11,13 +14,14 @@ export const closeAllComments = () => {
     const comments = [...document.getElementsByClassName('lineComment')];
     comments.forEach(
         comment =>
-            !comment.classList.contains('invalid_assignment') &&
-            closeComment(comment)
+            !comment ||
+            (!comment.classList.contains('invalid_assignment') &&
+                closeComment(comment))
     );
 };
 
 export const closeAllCommentsExcept = keepOpen => {
-    //find all comments and remove the 'open' class from them
+    // find all comments and remove the 'open' class from them
     const comments = [...document.getElementsByClassName('lineComment')];
     comments.forEach(comment => comment !== keepOpen && closeComment(comment));
 };
