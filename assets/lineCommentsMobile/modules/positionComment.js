@@ -6,6 +6,7 @@ export const positionComment = ({
     blockIndex,
     comment,
     commentWidth,
+    hidden,
     isMobile,
     leftOffset,
     lineHeight,
@@ -35,13 +36,19 @@ export const positionComment = ({
         //change the width of the content div
         comment.childNodes[0].style.width = `${commentWidth - 20}px`;
     } else {
-        //desktop layout
-        comment.style.width = `${commentWidth}px`;
+        if (hidden) {
+            comment.setAttribute('hidden', true);
+        } else {
+            comment.removeAttribute('hidden');
 
-        //top aligns with lineNumber div
-        comment.style.top = `${topOffset}px`;
+            //desktop layout
+            comment.style.width = `${commentWidth}px`;
 
-        //floats to the left
-        comment.style.left = `${leftOffset - commentWidth - 48}px`;
+            //top aligns with lineNumber div
+            comment.style.top = `${topOffset}px`;
+
+            //floats to the left
+            comment.style.left = `${leftOffset - commentWidth - 48}px`;
+        }
     }
 };

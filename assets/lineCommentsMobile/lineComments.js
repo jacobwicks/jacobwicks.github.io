@@ -16,8 +16,11 @@ import mobilecheck from './modules/mobileCheck.js';
     //true if the user has a mobile browser
     const isMobile = mobilecheck();
 
+    const details = [...document.querySelectorAll('details')];
+
     //set the initial position and format of all comments
     positionAllComments({
+        details,
         isMobile,
         setup: true,
     });
@@ -37,6 +40,7 @@ import mobilecheck from './modules/mobileCheck.js';
 
             //call the debounced version of positionAllComments
             debouncedPositionAllComments({
+                details,
                 isMobile,
             });
         }

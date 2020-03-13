@@ -11,7 +11,7 @@ import { setupCodeBlocks } from './setupCodeBlocks.js';
 //finds all elements with the lineComment class
 //positions them next to their assigned code block and line number
 //if setup is true, it's the first time, so it adds some interior elements to make content display correctly
-export const positionAllComments = ({ isMobile, setup }) => {
+export const positionAllComments = ({ details, isMobile, setup }) => {
     //wrapper is an element added by Jekyll
     const wrapper = document.getElementsByClassName('wrapper')[0];
     //we use the width of wrapper as the basis for calculating how wide to make the comments
@@ -46,7 +46,8 @@ export const positionAllComments = ({ isMobile, setup }) => {
 
         //set up the code blocks- translate named blocks,
         //add divs and ids to the line numbers
-        setupCodeBlocks({ codeBlocks, comments, isMobile });
+        //add event listeners to collapsible details elements that contain codeBlocks
+        setupCodeBlocks({ codeBlocks, comments, details, isMobile });
 
         //find all comments assigned to invalid block numbers
         identifyInvalidCommentAssignments({ codeBlocks, comments });
@@ -61,6 +62,17 @@ export const positionAllComments = ({ isMobile, setup }) => {
 
     // for each code block element with line numbers
     codeBlocks.forEach((codeBlock, blockIndex) => {
+        //if this codeBlock element
+        //is inside a details element
+        //then all comments in it should be hidden or open
+        let hidden;
+
+        //depending on whether the detail element is open or closed
+        if (details.some(detail => detail.contains(codeBlock))) {
+            const ancestor = details.find(detail => detail.contains(codeBlock));
+            hidden = !ancestor.open;
+        }
+
         //get the comments that are supposed to go in this block
         const blockComments = getBlockComments({
             blockIndex,
@@ -84,6 +96,7 @@ export const positionAllComments = ({ isMobile, setup }) => {
                 blockIndex,
                 comment,
                 commentWidth,
+                hidden,
                 isMobile,
                 leftOffset,
                 lineHeight,

@@ -38,7 +38,7 @@ This is what it looked like on desktop browsers:
 
 It worked on the desktop, but didn't work on mobile. The comments were designed to float to the left of the code blocks. But when viewed on a mobile device, the main column of the Jekyll blog post takes up the entire width of the screen. There was no space to the left of the code blocks, so the comments got squashed down to nothing.
 
-![comments didn't work on mobile](/assets//images/2020-02-21/old-comments-on-mobile.png)
+![comments didn't work on mobile](/assets//images/2020-02-21/old-comments-on-mobile.png){: .center-image }
 
 Well, that's what happens when you don't design for mobile from the start! Because this is a blog to show off my development skills, I decided to make it work on mobile too.
 
@@ -46,7 +46,7 @@ Well, that's what happens when you don't design for mobile from the start! Becau
 
 Here's what the new mobile comments look like:
 
-![new comments on mobile](/assets//images/2020-02-21/new-comments-on-mobile.png)
+![new comments on mobile](/assets//images/2020-02-21/new-comments-on-mobile.png){: .center-image }
 
 To start the process of making the lineComments work on mobile devices, I first decided how the mobile lineComments should behave. I knew that I wanted the comments to basically look the same as the desktop version. This will give a more consistent user experience.
 
@@ -325,3 +325,4 @@ here it is
 </div>
 
 {% include lineCommentsMobile.html %}
+{% include formatting.html %}
