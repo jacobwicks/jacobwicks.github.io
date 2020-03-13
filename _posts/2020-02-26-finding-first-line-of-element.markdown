@@ -3,6 +3,8 @@ layout: post
 title: 'Use JavaScript to Finding the First Line of Text in an Element'
 date: 2020-02-26 8:00:00 -0800
 ---
+
+{% highlight javascript linenos %}
 // const getFirstLine = el => {
 //     const text = el.innerHTML;
 
@@ -63,3 +65,5 @@ date: 2020-02-26 8:00:00 -0800
 //         prev += cur.substring(prev.length, cur.length);
 //     }
 // };
+
+{% endhighlight %}
