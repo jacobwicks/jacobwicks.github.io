@@ -46,12 +46,9 @@ export const setupCodeBlocks = ({
             const ancestor = details.find(detail => detail.contains(codeBlock));
             //when the details element toggles between open and closed, call positionAllComments
             //this will hide or reveal the comments on the collapsible code block
-            ancestor.addEventListener('toggle', ({ target }) => {
-                isMobile &&
-                    !target.open &&
-                    blockComments.forEach(comment => closeComment(comment));
-                positionAllComments({ details, isMobile });
-            });
+            ancestor.addEventListener('toggle', () =>
+                positionAllComments({ details, isMobile })
+            );
         }
 
         blockComments.forEach((comment, commentIndex) =>

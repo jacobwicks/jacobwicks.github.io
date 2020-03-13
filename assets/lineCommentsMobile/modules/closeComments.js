@@ -1,6 +1,6 @@
 import { getLineNumberDivFromComment } from './getLineNumberDivFromComment.js';
 
-const closeComment = comment => {
+export const closeComment = comment => {
     const lineNumberDiv = getLineNumberDivFromComment(comment);
     if (lineNumberDiv) {
         lineNumberDiv.classList.remove('selected');

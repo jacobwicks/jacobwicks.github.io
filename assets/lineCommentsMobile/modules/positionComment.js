@@ -1,5 +1,6 @@
 import { getLineNumber } from './getLineNumber.js';
 import { getOffsetTop } from './getOffsetTop.js';
+import { closeComment } from './closeComments.js';
 
 //puts a comment in the correct position relative to its assigned codeBlock and lineNumber
 export const positionComment = ({
@@ -35,6 +36,10 @@ export const positionComment = ({
 
         //change the width of the content div
         comment.childNodes[0].style.width = `${commentWidth - 20}px`;
+
+        //hidden is true if comment is in a collapsible code block that is collapsed
+        //close the comment
+        hidden && closeComment(comment);
     } else {
         if (hidden) {
             comment.setAttribute('hidden', true);
