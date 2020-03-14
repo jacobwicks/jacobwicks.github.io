@@ -269,6 +269,7 @@ const bindSlider = name => controlSlider.bind(null, name, settings)();
 
 Generating random numbers is an important part of deciding whether to make a typo for any given input character. Random numbers are also used to select the character that results from the typo. Here is the getRandomInt function. It can generate random integers between any requested values. By default it will generate a number between and including 1-100.
 
+<details><summary markdown="span">`getRandomInt`</summary>
 {% highlight javascript linenos %}
 blockName getRandomInt
 //returns a random integer
@@ -284,6 +285,8 @@ min = Math.ceil(min);
 
 };
 {% endhighlight %}
+
+</details>
 
 <div class = "lineComment" id='{
     block: getRandomInt,
@@ -416,6 +419,7 @@ The offset values are used in both the display and when calculating the distance
 
 The array.forEach method is used to put the keys from each row on the screen.
 
+<details><summary markdown="span">`setupKeyboardDisplay`</summary>
 {% highlight javascript linenos %}
 //displays all the keys from the keyboard on the screen
 //as span elements inside the keyboard div
@@ -484,6 +488,8 @@ const keyboardDiv = document.querySelector('.keyboard');
 };
 {% endhighlight %}
 
+</details>
+
 ## Navigating the Keyboard
 
 To make realistic typographical errors, we first take the input character, locate the row and key index of the target character on the keyboard. Then we find the nearest key that is in the homerow. The keys on the path from the nearest homerow key to the target key are the most likely typos. To complete the set of possible typos we also find all keys within 1 key of the target key and all keys within 2 keys of the target key.
@@ -499,6 +505,7 @@ The keyboard navigation functions include
 
 To get the index of a character in the keyboard, loop through each row. In each row, loop through each column. If the uppercase or lowercase item is the target character, return the row and column indexes. If the match for the target character is found in the uppercase, return isUppercase = _true_. If the target character is not found, return undefined.
 
+<details><summary markdown="span">`getIndexOfCharacter`</summary>
 {% highlight javascript linenos %}
 //getIndexOfCharacter accepts a letter and finds it in the keyboard
 //it will return an object with row, column, and isUppercase boolean
@@ -549,6 +556,8 @@ if (!keyboard || !character) return undefined;
 };
 {% endhighlight %}
 
+</details>
+
 # Finding the Distance from One Key to Another
 
 Finding the distance from one key to another is an important part of simulating the most likely typographical errors. The `distanceFrom` function accepts two indexes and the `keyboardModel` object. If the optional argument `returnPath` is _true_ then the array of keys on the path from index1 to index2 will be returned in addition to the distance.
@@ -569,6 +578,7 @@ An interesting part of solving this problem is how to deal with the offsets. Eac
 
 The offsets make some keys inaccessible by a diagonal move. Consider the diagonal move from 's' to 'c'. Row 2, column 2 is 's'. Row 3, column 3 is 'c'. Without the offsets, you could make a single diagonal move up one row and over one column to move from 'c' to 's'. But if you look at the keyboard above, 's' is not adjacent to 'c'. The way we account for that in the model is whenever
 
+<details><summary markdown="span">`distanceFrom`</summary>
 {% highlight javascript linenos %}
 //accepts two indexes, returns a number and
 //if returnPath === true, also an array of keys on the path from index1 to index2
@@ -694,6 +704,8 @@ const { keyboard, offsets } = keyboardModel;
 
 };
 {% endhighlight %}
+
+</details>
 
 ## Adding Typos
 

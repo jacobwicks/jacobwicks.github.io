@@ -7,9 +7,12 @@ export const getNamedCodeBlocks = () => {
     //reduce the array of rouge-table elements to an array
     //of each codeblock with line numbers
     const linedBlocks = rougeTables.reduce((blocksWithLines, table) => {
+        //a codeblock with linenumbers will have these elements
+        //<pre> with class 'lineno', <td> with class 'code'
         if (table.querySelectorAll('pre.lineno, td.code').length === 2) {
             blocksWithLines.push(table);
         }
+
         return blocksWithLines;
     }, []);
 

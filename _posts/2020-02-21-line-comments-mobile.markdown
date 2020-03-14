@@ -171,6 +171,7 @@ export const setupCodeBlocks = ({ codeBlocks, comments, isMobile }) => {
 
 `addLineNumberDivsToAllBlocks` calls the function `addLineNumberDivsToBlock` for each code block with line numbers in the document. `addLineNumberDivsToBlock` adds divs with ids around the the line numbers, so that the line numbers can be found when the assigned comment is positioned. If `isMobile` is true, it highlights line numbers that have an assigned comment and adds an event listener that will open and close the assigned comment when the line number is clicked.
 
+<details><summary markdown="span">`addLineNumberDivsToBlock`</summary>
 <!-- prettier-ignore -->
 {% highlight javascript linenos %}
 //adds a div to each line number in the block
@@ -224,6 +225,8 @@ const addLineNumberDivsToBlock = ({
 };
 {% endhighlight %}
 
+</details>
+<br/>
 <div class = "lineComment" id="block.3.line.5">
 `codeBlock` is a reference to the element created by Jekyll that contains the line numbers for a codeblock.
 </div>

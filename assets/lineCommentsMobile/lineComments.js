@@ -16,10 +16,24 @@ import mobilecheck from './modules/mobileCheck.js';
     //true if the user has a mobile browser
     const isMobile = mobilecheck();
 
+    //get the line number element for each code block
+    const codeBlocks = [...document.getElementsByClassName('lineno')];
+
+    //get all lineComments from the document
+    //getElementsByClassName returns an HTMLCollection
+    //HTMLCollection is array-like, but is NOT a JavaScript Array
+    //use the spread operator to make it an array
+    const comments = [...document.getElementsByClassName('lineComment')];
+
+    //find all details elements
+    //details are collapsible elements.
+    //Codeblocks may be inside details elements
     const details = [...document.querySelectorAll('details')];
 
     //set the initial position and format of all comments
     positionAllComments({
+        codeBlocks,
+        comments,
         details,
         isMobile,
         setup: true,
@@ -40,6 +54,8 @@ import mobilecheck from './modules/mobileCheck.js';
 
             //call the debounced version of positionAllComments
             debouncedPositionAllComments({
+                codeBlocks,
+                comments,
                 details,
                 isMobile,
             });

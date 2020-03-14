@@ -25,6 +25,7 @@ export const positionComment = ({
     const topOffset = getOffsetTop(targetLine);
 
     //set the position of the comment
+    //mobile first
     if (isMobile) {
         //post width is the width of the post element created by jekyll
         //it is calculated in the position all comments function
@@ -41,6 +42,7 @@ export const positionComment = ({
         //close the comment
         hidden && closeComment(comment);
     } else {
+        //desktop
         if (hidden) {
             comment.setAttribute('hidden', true);
         } else {

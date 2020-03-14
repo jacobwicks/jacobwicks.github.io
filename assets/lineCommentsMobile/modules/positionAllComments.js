@@ -11,7 +11,13 @@ import { setupCodeBlocks } from './setupCodeBlocks.js';
 //finds all elements with the lineComment class
 //positions them next to their assigned code block and line number
 //if setup is true, it's the first time, so it adds some interior elements to make content display correctly
-export const positionAllComments = ({ details, isMobile, setup }) => {
+export const positionAllComments = ({
+    codeBlocks,
+    comments,
+    details,
+    isMobile,
+    setup,
+}) => {
     //wrapper is an element added by Jekyll
     const wrapper = document.getElementsByClassName('wrapper')[0];
     //we use the width of wrapper as the basis for calculating how wide to make the comments
@@ -24,20 +30,11 @@ export const positionAllComments = ({ details, isMobile, setup }) => {
     let commentWidth = isMobile
     //on mobile, it's as wide as the post element created by jekyll
     ? document.querySelector('.post-content, .e-content').offsetWidth
-    : //on desktop, it's the greater of 1/2 the wrapper width or the whole left offset of the wrapper
+    //on desktop, it's the greater of 1/2 the wrapper width or the whole left offset of the wrapper
     //this will be reduced later if the screen width is very narrow
-        halfWrapperWidth > wrapperLeft
+    : halfWrapperWidth > wrapperLeft
             ? wrapperLeft
             : halfWrapperWidth;
-
-    //get all lineComments from the document
-    //getElementsByClassName returns an HTMLCollection
-    //HTMLCollection is array-like, but is NOT a JavaScript Array
-    //use the spread operator to make it an array
-    const comments = [...document.getElementsByClassName('lineComment')];
-
-    //get the line number element for each code block
-    const codeBlocks = [...document.getElementsByClassName('lineno')];
 
     //first time through
     if (setup) {
@@ -69,8 +66,14 @@ export const positionAllComments = ({ details, isMobile, setup }) => {
 
         //depending on whether the detail element is open or closed
         if (details.some(detail => detail.contains(codeBlock))) {
-            const ancestor = details.find(detail => detail.contains(codeBlock));
-            hidden = !ancestor.open;
+            //ancestors is an array of the detail element(s) that the codeBlock is in
+            const ancestors = details.filter(detail =>
+                detail.contains(codeBlock)
+            );
+
+            //if any details elements that contain the codeblock are closed,
+            //then the codeblock is hidden
+            hidden = ancestors.some(ancestor => !ancestor.open);
         }
 
         //get the comments that are supposed to go in this block

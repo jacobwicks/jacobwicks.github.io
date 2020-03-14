@@ -1,6 +1,5 @@
 import { addLineNumberDivsToAllBlocks } from './addLineNumberDivsToAllBlocks.js';
 import { assignCommentsToNamedBlocks } from './assignCommentsToNamedBlocks.js';
-import { closeComment } from './closeComments.js';
 import { getBlockComments } from './getBlockComments.js';
 import { getNamedCodeBlocks } from './getNamedCodeBlocks.js';
 import { setCommentContent } from './setCommentContent.js';
@@ -22,7 +21,6 @@ export const setupCodeBlocks = ({
         namedCodeBlocks,
     });
 
-    //if it's the first time through
     //turn each line number into a div with an id
     addLineNumberDivsToAllBlocks({
         codeBlocks,
@@ -43,11 +41,22 @@ export const setupCodeBlocks = ({
         //add an event listener to the details element
         //so we can show and hide the comments
         if (details.some(detail => detail.contains(codeBlock))) {
-            const ancestor = details.find(detail => detail.contains(codeBlock));
+            //find all the details that contain the codeblock
+            const ancestors = details.filter(detail =>
+                detail.contains(codeBlock)
+            );
+
             //when the details element toggles between open and closed, call positionAllComments
             //this will hide or reveal the comments on the collapsible code block
-            ancestor.addEventListener('toggle', () =>
-                positionAllComments({ details, isMobile })
+            ancestors.forEach(ancestor =>
+                ancestor.addEventListener('toggle', () =>
+                    positionAllComments({
+                        codeBlocks,
+                        comments,
+                        details,
+                        isMobile,
+                    })
+                )
             );
         }
 
