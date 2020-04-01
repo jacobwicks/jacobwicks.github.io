@@ -7,6 +7,10 @@ import mobilecheck from './modules/mobileCheck.js';
 //execute on load
 //curly brackets mean an IIFE
 {
+    //getWindowWidth returns the greater value of
+    //the document clientWidth property or
+    //the window innerwidth, or
+    //0 as a fallback value
     const getWindowWidth = () =>
         Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 
@@ -19,10 +23,10 @@ import mobilecheck from './modules/mobileCheck.js';
     //get the line number element for each code block
     const codeBlocks = [...document.getElementsByClassName('lineno')];
 
-    //get all lineComments from the document
-    //getElementsByClassName returns an HTMLCollection
-    //HTMLCollection is array-like, but is NOT a JavaScript Array
-    //use the spread operator to make it an array
+    // get all lineComments from the document
+    // getElementsByClassName returns an HTMLCollection
+    // HTMLCollection is array-like, but is NOT a JavaScript Array
+    // use the spread operator to make it an array
     const comments = [...document.getElementsByClassName('lineComment')];
 
     //find all details elements
