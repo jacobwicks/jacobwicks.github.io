@@ -5,8 +5,6 @@ export const addLabelToContent = ({ content, label }) => {
     //use trim to remove whitespace from innerHTML
     const trimmed = content.trim();
 
-    console.log(`eeyyy, content`, content, trimmed);
-
     //make a new string with the lineLabel inside of the comment's <p> element
     return `${trimmed.slice(0, 3)}${labelSpan} ${trimmed.slice(
         3,
