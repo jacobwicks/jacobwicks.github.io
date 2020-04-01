@@ -22,10 +22,12 @@ export const isNamedBlock = element => {
 
     //if the first nine letters are blockname, then the user has named the block
     if (firstNine === 'blockname') {
+        const start = tempSpan.innerText.charAt(9) === ':' ? 10 : 9;
+
         //slice off 'blockname' and trim the whitespace
         const name = tempSpan.innerText
             .trim()
-            .slice(9, tempSpan.innerText.length)
+            .slice(start, tempSpan.innerText.length)
             .trim();
 
         //returning the index of the second line allows us to chop off the first line

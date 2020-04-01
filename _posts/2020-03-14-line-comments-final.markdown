@@ -4,12 +4,10 @@ title: 'lineComments'
 date: 2020-03-14 8:00:00 -0800
 ---
 
-### What is lineComments?
-
-lineComments is a project that lets you attach comments to a single line of code in codeBlocks in your Jekyll blog posts.
+`lineComments` lets you attach comments to a single line of code in codeBlocks in your Jekyll blog posts.
 
 {% highlight javascript linenos %}
-blockName firstExample
+blockName: firstExample
 //heres some really complicated code
 {% endhighlight %}
 
@@ -17,48 +15,97 @@ blockName firstExample
 This is an explanation of what's going on in line 1.
 </div>
 
-[Install](#install)
+## How Comments Look on Desktop
 
-[Use](#use)
+The comment is positioned to the left of the line number. When the user hovers the comment, it will expand to display its full text.
 
-[How the Code Works](#javascript-finds-the-line-numbers)
+![desktop comment](/assets//images/lineCommentsgif.gif)
+
+## How Comments Look on Mobile Devices
+
+Line numbers that have comments are highlighted. When the reader clicks a line number with a comment, the comment will open. The box that contains the comment appears below the assigned line, and hovers in place. The reader can drag the screen around behind the comment. Clicking the comment or the assigned line number closes the comment.
+
+![mobile comment](/assets//images/2020-03-14/mobileCommentsExample.gif)
+
+# Jump to:
+
+-   [Install lineComments in Your Jekyll Blog](#how-to-install-linecomments-in-your-jekyll-blog)
+
+-   [Use lineComments](#how-to-use-linecomments)
+
+-   [How the Code Works](#javascript-finds-the-line-numbers)
 
 ### Why make lineComments?
 
-I like to give very specific explanations of what code does. I think going into detail about parts of the language that will be well known to experienced programmers is helpful for beginners. When starting out it can be very frustrating to try and grasp the main point of an article when it includes many other operations that advanced users are already familiar with, but doesn't explain what those are. The problem with explaining too much is that it can be hard to connect the explanation of a line or part of a block of code to the actual code. It is hard to connect the explanation to the code without losing context, cluttering the page, or making the article too long, which can distract from the main point. So I decided to make it possible to float comment boxes next to specific lines of code. That way the explanation is clearly visually connected to the code that is being explained. This helps the reader keep the ideas connected, while saving vertical screen space. The explanations are collapsed, keeping the page relatively free of clutter and allowing the reader to focus. lineComments also supports collapsing codeBlocks using the html details and summary elements.
+I like to give very specific explanations of what code does. I think going into detail about parts of the language that will be well known to experienced programmers is helpful for beginners. For people starting out it can be very frustrating to try and grasp the main point of an article when the article includes many other operations that advanced users are already familiar with, but doesn't explain what those other operations are.
 
-### How can I use it in my Jekyll blog?
+The problem with explaining too much is that it can be hard to connect the explanation of a line or part of a block of code to the actual code. It is hard to connect the explanation to the code without losing context, cluttering the page, or making the article too long. Too much on the screen can distract from the main point.
 
-## Install
+So I decided to make it possible to float comment boxes next to specific lines of code. That way the explanation is clearly visually connected to the code that is being explained. This helps the reader keep the ideas connected, while saving vertical screen space. The explanations are collapsed, keeping the page relatively free of clutter and allowing the reader to focus.
+
+`lineComments` works on any Jekyll blog, including the ones hosted on GitHub pages. `lineComments` works on desktop and mobile, and also supports collapsing code blocks using the HTML details and summary elements.
+
+## How to Install lineComments in Your Jekyll Blog
 
 # Download the Files from Github
 
-First, download the lineComments files from the git repo.
+First, download the lineComments files from the [git repo](https://github.com/jacobwicks/lineCommentsMobile).
 
 # Put the Files in Your Blog Folders
 
-In your blog folder, you probably already have an folder named 'assets' a folder named '\_includes'. If you don't have them, then create them.
+In your blog folder, you probably already have an folder named 'assets' a folder named '\_includes'. If you don't have these folders, then create them.
 
-Put lineCommentsMobile.html in the '\_includes' folder.
+-   Put lineCommentsMobile.html in the '\_includes' folder.
+-   Inside the 'assets' folder, create a new folder named 'lineCommentsMobile'.
+-   Put lineComments.css into the lineCommentsMobile folder.
+-   Put lineComments.js into the lineCommentsMobile folder.
+-   Put the 'modules' folder in the lineCommentsMobile folder.
 
-Inside the 'assets' folder, create a new folder named 'lineCommentsMobile'.
-Put lineComments.css into the lineCommentsMobile folder.
-Put lineComments.js into the lineCommentsMobile folder.
-Put the modules folder in the lineCommentsMobile.
+# Change the Config File
 
-## Use
+Your Jekyll blog probably has a config file. This file is named '\_config.yml' and is usually found in the root directory of your blog. If you do not have this file, then create it.
 
-# Include lineCommentsMobile.html in Each Post Where You Want to Use it
+Add these settings to your config file:
 
-Add this tag at the bottom of each blog post where you want to use lineComments.
+<!-- prettier-ignore -->
+{% highlight markdown %}
+markdown: kramdown
+kramdown:
+    parse_block_html: true
+    parse_span_html: true
+{% endhighlight %}
 
+These settings tell Jekyll to use [kramdown](https://kramdown.gettalong.org/) to process markdown. They tell kramdown to parse markdown that it finds inside of html elements. That makes it so you can use markdown inside your `lineComments`. Your `lineComments` will be inside of divs, which are html elements.
+
+## How to Use lineComments
+
+-   [Include lineCommentsMobile.html in the post](#include-linecommentsmobile.html-in-the-post)
+-   [Tag the code blocks](#tag-the-code-blocks)
+-   [Name the code blocks](#name-the-code-blocks)
+-   [Write your comments inside a div](#make-the-comment-divs)
+-   [Optional: put your code blocks inside a collapsible details element](#collapsible-code-blocks)
+
+# Include lineCommentsMobile.html in the Post
+
+Add this Liquid tag at the bottom of each blog post where you want to use lineComments. [Liquid Tags](https://jekyllrb.com/docs/liquid/) are inside curly braces `{` and percent signs `%`.
+
+```
 {% raw %}
 {% include lineCommentsMobile.html %}
 {% endraw %}
+```
+
+This tells Jekyll to use the code that it finds in the lineCommentsMobile.html file. This will make it use the JavaScript and CSS to find, format, and position the comments correctly.
 
 # Tag the Code Blocks
 
-Use Liquid tags to tag your code block.
+When you include code blocks in your post, you can tell Jekyll to format them so they are easier for the user to read. You can tell Jekyll to format code blocks using [Liquid Tags](https://jekyllrb.com/docs/liquid/).
+
+**highlight** tells Jekyll to highlight the code.
+
+**javascript** is the desired language. You can highlight other languages instead.
+
+**linenos** tells Jekyll to add line numbers to the code block.
 
 ```
 {% raw %}
@@ -68,53 +115,90 @@ const helloWorld = () => console.log('Hello World!');
 {% endraw %}
 ```
 
-# Optional: Name the Code Blocks
+This gives you a block of code that looks like this:
 
-The easiest way to keep track of the code blocks that you are adding comments to is to name each code block. To name a code block start the first line of the code with 'blockName' followed by the string that you want to name the block. When lineComments runs it will strip the blockName out, so the blockName will not be displayed to the reader.
+{% highlight javascript linenos %}
+const helloWorld = () => console.log('Hello World!');
+{% endhighlight %}
+
+# Name the Code Blocks
+
+Name the code block that you want to assign comments to. You will assign comments to the code block by including the name of the code block in the comments' id property.
+
+To name a code block start the first line of the code with 'blockName:' followed by the string that you want to name the block. When `lineComments` runs it will strip the blockName out, so the blockName will not be displayed to the reader.
 
 ```
 {% raw %}
 {% highlight javascript linenos %}
-blockName hello world
+blockName: hello world
 const helloWorld = () => console.log('Hello World!');
 {% endhighlight %}
 {% endraw %}
 ```
-
-You don't have to name code blocks to attach comments. If you don't name a code block, you can still attach comments to it by it's index (e.g. it's the third code block on the page, it's block index is 2). But that's harder than just naming the code block.
 
 # Make the Comment Divs
 
-A comment needs to be inside a div element. Give the div the class "lineComment". Give the div an id property that identifies the assigned block and the line number. Here's an example:
+You write your comments inside of an HTML div element.
+
+To tell `lineComments` that the div is a comment, assign the class "lineComment" to the div.
+
+To tell `lineComments` which code block to attach the comment to, write a JSON object in the id property.
+
+The id must have the key 'block' with the value of the name of the block the comment is assigned to.
+
+The id must have the key 'line' with the number of the line that the comment is assigned to.
+
+The id is a string. LineComments will parse 'relaxed formatting', which means you don't need to surround the keys and values inside the id with quotes.
+
+You can use markdown to format text inside the comment. Here's an example:
 
 ```
 <div class = "lineComment" id='{
     block: hello world,
     line: 1
     }'>
-Hello world is the best thing to say in a program
+*Hello world* is the best thing to say **in a [program](https://en.wikipedia.org/wiki/Computer_program)**
 </div>
 ```
 
-## Comment Ids
+That comment will show up on line 1 of the code block named 'hello world.' Like this:
 
-# in JSON format
+{% highlight javascript linenos %}
+blockName: hello world
+const helloWorld = () => console.log('Hello World!');
+{% endhighlight %}
 
-# In String format
+<div class = "lineComment" id='{
+    block: hello world,
+    line: 1
+    }'>
+*Hello world* is the best thing to say **in a [program](https://en.wikipedia.org/wiki/Computer_program)**
+</div>
 
-index or blockName will both work
+# Watch Out!
+
+The div content **MUST** not start on the same as the div opening tag. You have to have a linebreak. If you start typing the content on the same line as the div opening tag Jekyll won't parse it correctly.
+
+Bad:
 
 ```
-<div class = "lineComment" id="block.2.line.17">
-Like this
-</div>;
+<div class = "lineComment" id="{block:hello world, line:1"> This won't work!
+</div>
 ```
 
-# Refer to code blocks by index or name
+Good:
+
+```
+<div class = "lineComment" id="{block:hello world, line:1">
+This will work!
+</div>
+```
 
 # Collapsible code blocks
 
-You can put your code blocks and comments inside a collapsible element using [HTML5 details elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and summary elements.
+If you want to save space on the page, you can put your code block inside of an [HTML details element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details). Details elements can expand and collapse to show or hide their contents. Comments assigned to the block will be hidden while the details element is collapsed.
+
+![collapsible code block](/assets//images/2020-03-14/collapsibleCodeBlock.gif)
 
 The summary element is optional. If you want the summary element to look right with markdown, you have to assign it `markdown='span'`. You also have to have it on the same line as the details opening tag. I think this is something to do with how Jekyll treats HTML.
 
@@ -129,7 +213,7 @@ const helloWorld = () => console.log('Hello World!');
 {% endraw %}
 ```
 
-I like to follow the details closing tag with a break tag, otherwise there won't be a space after the line. The break tag is optional.
+I like to follow the details closing tag with a break tag, otherwise there won't be a space before the next line of text. The break tag is optional.
 
 Putting the code block in a details element gives you this:
 
@@ -144,181 +228,28 @@ const helloWorld = () => console.log('Hello World!');
 This comment doesn't show up until you open the details element.
 </div>
 
-Comments assigned to the block will be hidden while the details element is collapsed.
+## That's it!
 
-### To Install LineComments in your Jekyll blog
+You are ready to use `lineComments` in your Jekyll blog. If you want to see how the code works, you can read about it below.
+<br/>
+<br/>
 
-o Download LineComments from Github
-o Put it in the folders
-o Change your config file
-o Include it at the bottom of the post
-• Source Code
+## How Does LineComments work?
 
-### How Does LineComments work?
-
-## Jekyll generates HTML from markdown.
-
-You write your blog entry using [Markdown](https://en.wikipedia.org/wiki/Markdown). Markdown lets you add tags to your text to format it for easy reading. [Jekyll](https://jekyllrb.com/) reads the markdown file and turns it into HTML. Jekyll can also read HTML inside the markdown files.
-
-# Format Code Blocks Using Liquid Tags
-
-When you include code blocks in your post, you can tell Jekyll to format them so they are easier for the user to read. You can tell Jekyll to format code blocks using [Liquid Tags](https://jekyllrb.com/docs/liquid/). Liquid Tags are inside curly braces and percent signs, like this:
-
-```
-{% raw %}
-{% highlight javascript %}
-This is a code block inside a Liquid Tag
-Code goes here
-{% endhighlight %}
-{% endraw %}
-```
-
-# Add Line Numbers to Code Blocks
-
-You can add line numbers to highlighted code blocks. To add line numbers, you add 'linenos' to the opening tag:
-
-```
-{% raw %}
-{% highlight javascript linenos %}
-{% endraw %}
-```
-
-When you do that, you get a code block with line numbers, like this:
-{% highlight javascript linenos %}
-This is a code block inside a Liquid Tag
-Code goes here
-{% endhighlight %}
-
-# Name Your Code Blocks
-
-To make it easy to assign comments to code blocks, LineComments lets you give each code block a name.
-
-This block is named 'example codeBlock':
-
-```
-{% raw %}
-{% highlight javascript %}
-blockName example codeBlock
-This is a code block inside a Liquid Tag
-Code goes here
-{% endhighlight %}
-{% endraw %}
-```
-
-## JavaScript Finds the Line Numbers
-
-LineComments uses JavaScript to find the line numbers on each code block. Each line number is put inside a div with a unique id. Then, when you assign a comment to a line of code in a code block, LineComments uses the position of the line number div to put the comment in the right place.
-
-## Write Your Comments in a Div
-
-You write your comments inside of an HTML div element. To tell LineComments that the div is a comment, assign the class "lineComment" to the div. To tell LineComments which block to attach the comment to, write a JSON object in the id property. The JSON object must have the key 'block' with the value of the name of the block the comment is assigned to. The JSON object must have the key 'line' with the number of the line that the comment is assigned to. The JSON object is inside a string. LineComments will parse 'relaxed formatting', which means you don't need to surround the keys and values inside the JSON object with quotes.
-
-```
-{% raw %}
-<div class = "lineComment" id='{
-    block: example codeBlock,
-    line: 2
-    }'>
-    This is a comment on the code in line 2
-</div>
-{% endraw %}
-```
-
-## How Comments Look on Desktop
-
-The comment is positioned to the left of the line number. When the user hovers the comment, it will expand to display its full text.
-
-![desktop comment](/assets//images/lineCommentsgif.gif)
-
-## How Comments Look on Mobile Devices
-
-Line numbers that have comments are highlighted. When the reader clicks a line number with a comment, the comment will open. The box that contains the comment appears below the assigned line, and hovers in place. The reader can drag the screen around behind the comment. Clicking the comment or the assigned line number closes the comment.
-
-![mobile comment](/assets//images/2020-03-14/mobileCommentsExample.gif)
-
-## Collapsible Code Blocks
-
-If you want to save space on the page, you can put your code block inside of an [HTML details element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details). Details elements can expand and collapse to show or hide their contents. LineComments will use JavaScript to make the details element listen for the collapse event and will close any comments inside of it when it collapses.
-
-![collapsible code block](/assets//images/2020-03-14/collapsibleCodeBlock.gif)
-
-Put a code block inside a collapsible details element like this:
-
-{% raw %}
-
-```
-<details><summary markdown="span">`whatever!`</summary>
-{% highlight javascript linenos %}
-blockName whatever
-//Hey, this is block name whatever
-const sayHello = () => console.log('Hello, world!');
-{% endhighlight %}
-
-</details>
-```
-
-{% endraw %}
-
-And assign comments to it in the normal way:
-
-{% raw %}
-
-```
-<div class = "lineComment" id='{
-    block: whatever,
-    line: 2
-    }'>
-Hello world is the best thing to say in a program
-</div>
-```
-
-{% endraw %}
-
-Which gives you this collapsible element:
-
-<details><summary markdown="span">`This is the collapsed code block named 'whatever'`</summary>
-{% highlight javascript linenos %}
-blockName whatever
-//Hey, this is block name whatever
-const sayHello = () => console.log('Hello, world!');
-{% endhighlight %}
-
-</details>
-<div class = "lineComment" id='{
-    block: whatever,
-    line: 2
-    }'>
-Hello world is the best thing to say in a program
-</div>
-
-### Development of lineComments
-
-# First version
-
-The first version of lineComments just implemented the ability to tag code block lines with comments. It worked on desktop, but didn't work at all on mobile- the comments didn't show up. Lesson learned! Always develop for mobile first.
-
-# Mobile version
-
-Making comments on lines in Jekyll Post CodeBlocks work on mobile
-
-# Final Improvements
-
-o Supporting Collapsible Code Blocks
-o Naming codeBlocks with relaxed JSON
-
-[anchor link](#how-the-code-works)
-
-# How the Code Works
-
+-   You write your post in markdown.
+-   You tag your code blocks and assign your `lineComments` to the code blocks.
+-   Jekyll generates HTML from markdown.
 -   [When the page loads, lineComments gets the window width and checks to see if it's on a mobile device.](#when-the-page-loads)
 -   Then it [finds all the comments](#finds-all-the-comments), all the [code blocks with line numbers](#finds-all-the-codeblocks), and all the [details elements](#finds-all-collapsible-details-elements).
 -   lineComments then runs the [initial setup](#initial-setup)
--   it changes the size, position, and format of the comments
--   if it is running on mobile, the comments are hidden
+-   Each comment is formatted and positioned on the screen next to the assigned line number.
 -   on desktop, comments expand when the user mouses over them
--   on mobile, comments expand when the user clicks the line number
+-   on mobile, comments are hidden. Comments expand when the user clicks the line number
+-   CSS classes control the look and animation of the comments.
 
-# When the Page Loads
+# Jekyll generates HTML from markdown.
+
+You write your blog entry using [Markdown](https://en.wikipedia.org/wiki/Markdown). Markdown lets you add tags to your text to format it for easy reading. [Jekyll](https://jekyllrb.com/) reads the markdown file and turns it into HTML. Jekyll can also read HTML inside the markdown files.
 
 # Gets the window width, checks to see if it’s on a mobile device
 
@@ -517,7 +448,7 @@ Block indexes start at 0, so in this example, the comment would be assigned to t
 
 -   JSON Form
 
-    It's much easier to name the code blocks and assign comments to the name than it is to keep track of the block index. To assign a comment by blockName, use the JSON form of id. The Json form is '{ block: index/blockName, line: lineNumber }'. `parseCommentIds` will parse this string to JSON and assign the comment to the code block with the given index or name, and line number.
+    It's much easier to name the code blocks and assign comments to the name than it is to keep track of the block index. The Json form is '{ block: index/blockName, line: lineNumber }'. It is expected that the user will assign comments to blocks using the JSON form of the id.
 
 ```
 {
@@ -528,7 +459,7 @@ Block indexes start at 0, so in this example, the comment would be assigned to t
 
 This will assign the comment to the block named 'My Example Block'. The comment will be assigned to line number 8.
 
-Writing a properly formatted string that will parse to a JSON object using [`JSON.parse()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) takes a lot of quote marks. `parseCommentIds` uses a library that allows it to parse relaxed JSON. This means you do not have to use any quotes to write the JSON form of the id.
+Writing a properly formatted string that will parse to a JSON object using [`JSON.parse()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) takes a lot of quote marks. `parseCommentIds` uses [JSON5](https://json5.org/) a library that allows it to parse relaxed JSON. This means the user does not have to use any quotes to write the JSON form of the id.
 
 # Setup Code Blocks
 
@@ -886,6 +817,8 @@ Then [position each comment](#positioncomment)
 
 # Is the Code Block In a Details Element?
 
+We can use the [`contains()`](https://www.w3schools.com/jsref/met_node_contains.asp) method to tell us if a code block is a 'descendant of,' which means inside of, a details element.
+
 <!-- prettier-ignore -->
 <details><summary markdown='span'>Determine if the code block is hidden</summary>
 {% highlight javascript linenos %}
@@ -978,7 +911,7 @@ Filter out comments with invalid assignments.
 
 # Calculate Left Offset of the Code Block
 
-To figure out where to locate comments on desktop, we need to calculate the left offset of a clode block. To find the left offset of an element, use a while loop to add its left offset to each of its parent elements.
+To figure out where to locate comments on desktop, we need to calculate the left offset of a code block. To find the left offset of an element, use a while loop to add its left offset to each of its parent elements.
 
 <details><summary markdown='span'>`getOffsetLeft`</summary>
 {% highlight javascript linenos %}
@@ -993,6 +926,8 @@ export const getOffsetLeft = element => {
 };
 {% endhighlight %}
 </details><br/>
+
+Top offset is calculated basically the same way.
 
 # positionComment
 
@@ -1064,11 +999,7 @@ export const positionComment = ({
 
 # Mobile Comments
 
-# Designing Desired Behavior on Mobile
-
-## Designing Desired Behavior on Mobile
-
-Here's what the new mobile comments look like:
+Here's what the mobile comments look like:
 
 ![new comments on mobile](/assets//images/2020-02-21/new-comments-on-mobile.png){: .center-image }
 
@@ -1203,6 +1134,213 @@ export const animatedCloseComment = comment => {
 <div class='lineComment' id='{block: animatedCloseComment, line: 9 }'>
 It can be jarring if the comment closes instantly. Setting a timeout on the CSS class change gives the animation time to work. This makes a more comfortable experience for the reader.
 </div>
+
+# Listen for Page Resize
+
+Running `positionAllComments` when the page loads will put the comments in the right place when the page loads for the first time. But to make the comments stay in the right place when the user resizes the page, we need to listen for the resize event. Use [addEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) to listen for the resize event happening on the window.
+
+{% highlight javascript linenos %}
+//listen for resize
+//on mobile chrome, all scroll events fire a resize
+//https://developers.google.com/web/updates/2016/12/url-bar-resizing
+//so check width difference
+//without this check, the mobile comments disappear when you scroll up
+window.addEventListener('resize', () => {
+const currentWindowWidth = getWindowWidth();
+
+        //the check for a change in window width
+        if (currentWindowWidth !== prevWindowWidth) {
+            //store the current window width
+            prevWindowWidth = currentWindowWidth;
+
+            //call the debounced version of positionAllComments
+            debouncedPositionAllComments({
+                codeBlocks,
+                comments,
+                details,
+                isMobile,
+            });
+        }
+    });
+
+{% endhighlight %}
+
+Resizing the page can fire the event listener many times very quickly. Running complicated code many times in a row can cause the page to slow down or not work right. So the event listener isn't calling `positionAllComments`. It is calling the variable `debouncedPositionAllComments`. This is a 'debounced' version of the `positionAllComments` function.
+
+[Debouncing](https://www.geeksforgeeks.org/debouncing-in-javascript/) is when you make sure that repeated, quick calls to a function only end up calling that function a single time. By passing a debounced version of `positionAllComments` to the event listener, we make sure that `positionAllComments` only gets called once when the user resizes the window. If we didn't debounce it, `positionAllComments` might get called hundreds of times a second, which would cause the page to slow down. In the full source code you can see the `debounce` function that we call to create the debounced version of `positionAllComments`.
+
+When the `eventListener` calls `debouncedPositionAllComments`, it automatically passes the event object as an argument to `debouncedPositionAllComments`. `debouncePositionAllComments` calls `positionAllComments`. `positionAllComments` will read the event object as its parameter `reposition`, so `reposition` will have a truthy value. That will stop the code that is only supposed to execute when `reposition` is falsy from executing.
+
+## The CSS
+
+We use CSS to accomplish several things. We use CSS to set the background color of the comment, create the shaft and head of the arrow pointing the line number, and collapse and expand the comments when the user hovers over them.
+
+[This article on CSS-Tricks.com](https://css-tricks.com/using-css-transitions-auto-dimensions/) explains the different ways of using CSS to animate changes in the height of an element where the height is automatically determined based on the size of the element's content. Each method has some benefits and some drawbacks. I chose to use `max-height` because it works well enough for this application and involves very few lines of code.
+
+# The Line Height Variable
+
+<!-- prettier-ignore -->
+{% highlight css %}
+/_ declaring a variable lh as 1.4rem, or 1.4 times the height of a single line of text
+line-height is equal to the value of the variable lh _/
+html {
+    --lh: 1.4rem;
+    line-height: var(--lh);
+}
+{% endhighlight %}
+
+Here we declare a [CSS variable](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) `lh`. By declaring `lh` as a CSS variable, we can refer back to it throughout the CSS. We can use `lh` in calculations.
+
+`lh` is equal to 1.4 `rem`. The [CSS unit `rem`](https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units) is the font size of the root element of the document. This basically means it's how tall in pixels the font characters will be. Multiplying `rem` by 1.4 gives us a height value that accounds for one character in height plus white space above and below it.
+
+We'll use `lh` later to set the collapsed height of the comments to either 3 lines or 1 line, depending on if there are other comments close by.
+
+# Line Comment Container, Before and After
+
+This section of CSS specifies the properties for the `line_comment_container` class. We use the `before` pseudo element to make the shaft of the arrow that points at the assigned line number. We use the `after` pseudo element to make the point of the arrow that points at the assigned line number.
+
+<!-- prettier-ignore -->
+<details><summary markdown='span'>CSS for the Line Comment Container</summary>
+{% highlight css linenos %}
+blockName cssLineCommentContainer
+/_ the before element of the line_comment_container
+creates the shaft of the arrow pointing at the line number _/
+.line_comment_container::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 10px solid;
+    border-bottom: 10px solid;
+    border-left: 25px solid;
+    border-right: 20px solid;
+    border-color: gray;
+    position: absolute;
+    right: -20px;
+    top: 0px;
+}
+
+/_ the line comment container holds the contents
+and displays the background color
+its default state is collapsed, displaying a maximum of 3 lines of text
+max-height is set to 3 _ the lh variable*/
+.line_comment_container {
+border-top: medium solid white;
+position: absolute;
+background-color: gray;
+text-align: left;
+border-radius: 6px;
+padding: 5px;
+max-height: calc(var(--lh) * 3);
+transition: max-height 1s ease-out;
+}
+
+/_ the after element of the line_comment_container
+creates the point of the arrow pointing at the line number _/
+.line_comment_container::after {
+content: '';
+width: 0;
+height: 0;
+border-top: 20px solid transparent;
+border-bottom: 20px solid transparent;
+border-left: 30px solid gray;
+position: absolute;
+right: -50px;
+top: -10px;
+}
+{% endhighlight %}
+
+</details><br/>
+
+<div class = "lineComment" id="block.cssLineCommentContainer.line.7">
+Setting each of the border properties forms a rectangle. 
+</div>
+
+<div class = "lineComment" id="block.cssLineCommentContainer.line.13">
+The body of the arrow is placed 20 pixels back from the right side of the comment. 
+</div>
+
+<div class = "lineComment" id="block.cssLineCommentContainer.line.22">
+Setting the border-top to white makes the separation between comments visible when they overlap. Overlap will occur if there is a comment on the line after another comment.
+</div>
+
+<div class = "lineComment" id="block.cssLineCommentContainer.line.28">
+The [CSS calc() function](https://developer.mozilla.org/en-US/docs/Web/CSS/calc) lets you perform calculations inside CSS property values. `max-height` is set to three times the value of the `lh` variable, or 3 lines of text plus whitespace.
+</div>
+
+<div class = "lineComment" id="block.cssLineCommentContainer.line.29">
+The [transition property](https://developer.mozilla.org/en-US/docs/Web/CSS/transition) allows you to control how an element will change appearance when a property of the element changes. This line says that when the `max-height` property changes, it should take 1 second to change, and `ease-out` is an animation that starts slow and ends slow, moving faster in the middle.  
+</div>
+
+<div class = "lineComment" id="block.cssLineCommentContainer.line.38">
+Setting `border-left` to gray and `border-top` and `border-bottom` to transparent creates a triangle pointing right.
+</div>
+
+<div class = "lineComment" id="block.cssLineCommentContainer.line.42">
+The head of the arrow is position to the right of the `line_comment_container`.
+</div>
+
+# Hover Effects
+
+When the user hovers the mouse over a comment, comment expands to the height of its content, the background gets lighter, and the arrow turns green. These hover effects are only used on the desktop.
+
+<details><summary markdown='span'>CSS Hover</summary>
+{% highlight css linenos %}
+blockName: cssHover
+/_ when the user hovers over the line_comment_container
+max-height is set to 100% of the viewport height_/
+.line_comment_container:hover {
+background-color: lightgray;
+max-height: 100vh;
+z-index: 99;
+}
+
+/_ the point of the arrow turns green _/
+.line_comment_container:hover:after {
+border-left: 30px solid green;
+}
+
+/_ the body of the arrow turns green _/
+.line_comment_container:hover:before {
+border-color: green;
+}
+{% endhighlight %}
+
+</details><br/>
+
+<div class = "lineComment" id="block.cssHover.line.6">
+Setting the z-index puts the hovered comment on top of any other comments it may overlap.
+</div>
+
+# The Comment Content
+
+The `line_comment_content` class controls the max-height of the content of the comment. We need to have this separate class for the content of the comment because we use `overflow: hidden` to hide any text that goes past the `max-height`. If we set `overflow: hidden` on the `line_comment_container`, then the `before` and `after` pseudo elements wouldn't show up because we render them outside of the body of the `line_comment_container` to create the pointing arrow effect.
+
+<details><summary markdown='span'>CSS Content</summary>
+{% highlight css linenos %}
+blockName: cssContent
+/_ the content of the comment
+max-height starts at three lines collapsed _/
+.line_comment_content {
+position: relative;
+max-height: calc(var(--lh) \* 3);
+transition: max-height 1s ease-out;
+overflow: hidden;
+padding-right: 1rem;
+}
+
+/_ when hovered, max height becomes 100% of the viewport height _/
+.line_comment_content:hover {
+max-height: 100vh;
+}
+{% endhighlight %}
+
+</details><br/>
+
+<div class = "lineComment" id="block.cssContent.line.13">
+On `hover` `max-height` is set to `100vh`, or 100% of the height of the viewport. The CSS `vh` unit is equal to 1% of the height of the viewport. The viewport is the browser window size.
+</div>
+
+And that's how `lineComments` works on a Jekyll blog. I hope you find it useful.
 
 {% include lineCommentsMobile.html %}
 {% include formatting.html %}
