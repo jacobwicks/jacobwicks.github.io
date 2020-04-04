@@ -437,19 +437,15 @@ blockName setup
 Users have the option of writing the comment div ids in two forms. The `parseCommentIds` function changes all the comment ids to the standard form, which is the form used by `lineComments` functions to manipulate comments while it runs.
 
 -   Standard Form
-
-    The standard form is 'block.blockIndex.line.lineNumber'. `lineComments` will parse this string and assign the comment to the block at the indicated index and line number.
-
 ```
 block.2.line.7
 ```
 
+The standard form is 'block.blockIndex.line.lineNumber'. `lineComments` will parse this string and assign the comment to the block at the indicated index and line number.
+
 Block indexes start at 0, so in this example, the comment would be assigned to the third code block on the page. The comment would appear next to the seventh line of code in the block.
 
 -   JSON Form
-
-    It's much easier to name the code blocks and assign comments to the name than it is to keep track of the block index. The Json form is '{ block: index/blockName, line: lineNumber }'. It is expected that the user will assign comments to blocks using the JSON form of the id.
-
 ```
 {
     block: My Example Block,
@@ -457,7 +453,9 @@ Block indexes start at 0, so in this example, the comment would be assigned to t
 }
 ```
 
-This will assign the comment to the block named 'My Example Block'. The comment will be assigned to line number 8.
+It's much easier to name the code blocks and assign comments to the name than it is to keep track of the block index. The Json form is '{ block: index/blockName, line: lineNumber }'. It is expected that the user will assign comments to blocks using the JSON form of the id.
+
+The example above will assign the comment to the block named 'My Example Block'. Block assignments are case sensitive. The comment will be assigned to line number 8.
 
 Writing a properly formatted string that will parse to a JSON object using [`JSON.parse()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) takes a lot of quote marks. `parseCommentIds` uses [JSON5](https://json5.org/) a library that allows it to parse relaxed JSON. This means the user does not have to use any quotes to write the JSON form of the id.
 
@@ -476,7 +474,6 @@ And here's what it would look like if we had 9 lines of code instead of just 1:
 These line numbers are what we want the comment boxes to line up with.
 
 <details><summary markdown='span'>Adding divs to each line number in a code block</summary>
-<!-- prettier-ignore -->
 {% highlight javascript linenos %}
 blockName addLineNumberDivsToBlock
 const addLineNumberDivsToBlock = ({
@@ -566,7 +563,6 @@ For each code block on the page, the `setupCodeBlocks` function will
 -   If the codeblock is inside a detail element, add an event listener to the detail that will call `positionAllComments` when the detail element is toggled
 -   Call setCommentContent to add the line label and content div inside the comment
 
-<!-- prettier-ignore -->
 <details><summary markdown='span'>`setupCodeBlocks`</summary>
 {% highlight javascript linenos %}
 //sets up each code block in the document
@@ -645,7 +641,6 @@ export const setupCodeBlocks = ({
 
 `setCommentContent` adds the line label and content div inside the comment.
 
-<!-- prettier-ignore -->
 <details><summary markdown='span'>`setCommentContent`</summary>
 {% highlight javascript linenos %}
 blockName setCommentContent
@@ -742,7 +737,6 @@ Here's an example of a comment with an invalid assignment:
 It is bright red and labeled with the blockIndex and lineNumber so the user may correct their mistake.
 </div>
 
-<!-- prettier-ignore -->
 <details><summary markdown='span'>`identifyInvalidCommentAssignments`</summary>
 {% highlight javascript linenos %}
 blockName identifyInvalidCommentAssignments
@@ -819,7 +813,6 @@ Then [position each comment](#positioncomment)
 
 We can use the [`contains()`](https://www.w3schools.com/jsref/met_node_contains.asp) method to tell us if a code block is a 'descendant of,' which means inside of, a details element.
 
-<!-- prettier-ignore -->
 <details><summary markdown='span'>Determine if the code block is hidden</summary>
 {% highlight javascript linenos %}
 blockName inDetails
@@ -1037,7 +1030,7 @@ So it's fine for the desktop to keep using hover. But using a click input to ope
 
 # Detecting a Mobile Device
 
-To detect a mobile device, you essentially check some information about the browser against a very long regex list. The open source regex is maintained at [detect mobile broswers](http://detectmobilebrowsers.com/). [This stackoverflow answer](https://stackoverflow.com/a/11381730) gives a JavaScript implementation of the function. I named my version of the function `mobileCheck`. `mobileCheck` returns _true_ if the device is a mobile device, and _false_ if not.
+To detect a mobile device, you essentially check some information about the browser against a very long regex list. The open source regex is maintained at [detect mobile browsers](http://detectmobilebrowsers.com/) website. [This stackoverflow answer](https://stackoverflow.com/a/11381730) gives a JavaScript implementation of the function. I named my version of the function `mobileCheck`. `mobileCheck` returns _true_ if the device is a mobile device, and _false_ if not.
 
 In the setup function I call `mobileCheck` and assign the result to the variable `isMobile`. Throughout the code, if `isMobile` is _true_ then the code to implement mobile behavior will run. Otherwise, the desktop code will run.
 
@@ -1139,6 +1132,7 @@ It can be jarring if the comment closes instantly. Setting a timeout on the CSS 
 
 Running `positionAllComments` when the page loads will put the comments in the right place when the page loads for the first time. But to make the comments stay in the right place when the user resizes the page, we need to listen for the resize event. Use [addEventListener](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) to listen for the resize event happening on the window.
 
+<details><summary markdown='span'>Adding the resize event listener</summary>
 {% highlight javascript linenos %}
 //listen for resize
 //on mobile chrome, all scroll events fire a resize
@@ -1165,6 +1159,8 @@ const currentWindowWidth = getWindowWidth();
 
 {% endhighlight %}
 
+</details>
+
 Resizing the page can fire the event listener many times very quickly. Running complicated code many times in a row can cause the page to slow down or not work right. So the event listener isn't calling `positionAllComments`. It is calling the variable `debouncedPositionAllComments`. This is a 'debounced' version of the `positionAllComments` function.
 
 [Debouncing](https://www.geeksforgeeks.org/debouncing-in-javascript/) is when you make sure that repeated, quick calls to a function only end up calling that function a single time. By passing a debounced version of `positionAllComments` to the event listener, we make sure that `positionAllComments` only gets called once when the user resizes the window. If we didn't debounce it, `positionAllComments` might get called hundreds of times a second, which would cause the page to slow down. In the full source code you can see the `debounce` function that we call to create the debounced version of `positionAllComments`.
@@ -1179,10 +1175,9 @@ We use CSS to accomplish several things. We use CSS to set the background color 
 
 # The Line Height Variable
 
-<!-- prettier-ignore -->
 {% highlight css %}
-/_ declaring a variable lh as 1.4rem, or 1.4 times the height of a single line of text
-line-height is equal to the value of the variable lh _/
+/* declaring a variable lh as 1.4rem, or 1.4 times the height of a single line of text
+line-height is equal to the value of the variable lh */
 html {
     --lh: 1.4rem;
     line-height: var(--lh);
@@ -1199,12 +1194,11 @@ We'll use `lh` later to set the collapsed height of the comments to either 3 lin
 
 This section of CSS specifies the properties for the `line_comment_container` class. We use the `before` pseudo element to make the shaft of the arrow that points at the assigned line number. We use the `after` pseudo element to make the point of the arrow that points at the assigned line number.
 
-<!-- prettier-ignore -->
 <details><summary markdown='span'>CSS for the Line Comment Container</summary>
 {% highlight css linenos %}
 blockName cssLineCommentContainer
-/_ the before element of the line_comment_container
-creates the shaft of the arrow pointing at the line number _/
+/* the before element of the line_comment_container
+creates the shaft of the arrow pointing at the line number */
 .line_comment_container::before {
     content: '';
     width: 0;
@@ -1219,33 +1213,33 @@ creates the shaft of the arrow pointing at the line number _/
     top: 0px;
 }
 
-/_ the line comment container holds the contents
+/* the line comment container holds the contents
 and displays the background color
 its default state is collapsed, displaying a maximum of 3 lines of text
-max-height is set to 3 _ the lh variable*/
+max-height is set to 3 _ the lh variable */
 .line_comment_container {
-border-top: medium solid white;
-position: absolute;
-background-color: gray;
-text-align: left;
-border-radius: 6px;
-padding: 5px;
-max-height: calc(var(--lh) * 3);
-transition: max-height 1s ease-out;
+    border-top: medium solid white;
+    position: absolute;
+    background-color: gray;
+    text-align: left;
+    border-radius: 6px;
+    padding: 5px;
+    max-height: calc(var(--lh) * 3);
+    transition: max-height 1s ease-out;
 }
 
-/_ the after element of the line_comment_container
-creates the point of the arrow pointing at the line number _/
+/* the after element of the line_comment_container
+creates the point of the arrow pointing at the line number */
 .line_comment_container::after {
-content: '';
-width: 0;
-height: 0;
-border-top: 20px solid transparent;
-border-bottom: 20px solid transparent;
-border-left: 30px solid gray;
-position: absolute;
-right: -50px;
-top: -10px;
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 30px solid gray;
+    position: absolute;
+    right: -50px;
+    top: -10px;
 }
 {% endhighlight %}
 
@@ -1286,22 +1280,22 @@ When the user hovers the mouse over a comment, comment expands to the height of 
 <details><summary markdown='span'>CSS Hover</summary>
 {% highlight css linenos %}
 blockName: cssHover
-/_ when the user hovers over the line_comment_container
-max-height is set to 100% of the viewport height_/
+/* when the user hovers over the line_comment_container
+max-height is set to 100% of the viewport height*/
 .line_comment_container:hover {
-background-color: lightgray;
-max-height: 100vh;
-z-index: 99;
+    background-color: lightgray;
+    max-height: 100vh;
+    z-index: 99;
 }
 
-/_ the point of the arrow turns green _/
+/* the point of the arrow turns green */
 .line_comment_container:hover:after {
-border-left: 30px solid green;
+    border-left: 30px solid green;
 }
 
-/_ the body of the arrow turns green _/
+/* the body of the arrow turns green */
 .line_comment_container:hover:before {
-border-color: green;
+    border-color: green;
 }
 {% endhighlight %}
 
@@ -1318,19 +1312,19 @@ The `line_comment_content` class controls the max-height of the content of the c
 <details><summary markdown='span'>CSS Content</summary>
 {% highlight css linenos %}
 blockName: cssContent
-/_ the content of the comment
-max-height starts at three lines collapsed _/
+/* the content of the comment
+max-height starts at three lines collapsed */
 .line_comment_content {
-position: relative;
-max-height: calc(var(--lh) \* 3);
-transition: max-height 1s ease-out;
-overflow: hidden;
-padding-right: 1rem;
+    position: relative;
+    max-height: calc(var(--lh) \* 3);
+    transition: max-height 1s ease-out;
+    overflow: hidden;
+    padding-right: 1rem;
 }
 
-/_ when hovered, max height becomes 100% of the viewport height _/
+/* when hovered, max height becomes 100% of the viewport height */
 .line_comment_content:hover {
-max-height: 100vh;
+    max-height: 100vh;
 }
 {% endhighlight %}
 
@@ -1346,7 +1340,7 @@ And that's how `lineComments` works on a Jekyll blog. I hope you find it useful.
 
 If you use `lineComments` you'll probably end up making some sort of macro to insert codeblocks and comment divs. Here's snippets that you can install in VSCode.
 
-```
+{% raw %}
 	"lineComment codeBlock": {
 		"prefix": [
 			"cb"
@@ -1371,7 +1365,7 @@ If you use `lineComments` you'll probably end up making some sort of macro to in
 			"<div class='lineComment' id='{block: , line: }'>\n\n</div>"
 		]
 	}
-```
+{% endraw %}
 
 [Create your own VSCode snippets](https://code.visualstudio.com/docs/editor/userdefinedsnippets#_create-your-own-snippets)
 After you create snippets, you can access snippets with ctrl+space.
