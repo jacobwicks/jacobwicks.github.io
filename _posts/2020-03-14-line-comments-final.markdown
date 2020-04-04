@@ -1342,5 +1342,39 @@ On `hover` `max-height` is set to `100vh`, or 100% of the height of the viewport
 
 And that's how `lineComments` works on a Jekyll blog. I hope you find it useful.
 
+## Extra: Snippets for VSCode
+
+If you use `lineComments` you'll probably end up making some sort of macro to insert codeblocks and comment divs. Here's snippets that you can install in VSCode.
+
+```
+	"lineComment codeBlock": {
+		"prefix": [
+			"cb"
+		],
+		"body": [
+			"{% highlight javascript linenos%}\nblockName: \n{% endhighlight %}"
+		]
+	},
+	"lineComment collapsible codeBlock": {
+		"prefix": [
+			"db"
+		],
+		"body": [
+			"<details><summary markdown='span'>Summary</summary>\n{% highlight javascript linenos%}\nblockName: \n{% endhighlight %}\n</details><br/>"
+		]
+	},
+	"lineComment": {
+		"prefix": [
+			"lc"
+		],
+		"body": [
+			"<div class='lineComment' id='{block: , line: }'>\n\n</div>"
+		]
+	}
+```
+
+[Create your own VSCode snippets](https://code.visualstudio.com/docs/editor/userdefinedsnippets#_create-your-own-snippets)
+After you create snippets, you can access snippets with ctrl+space.
+
 {% include lineCommentsMobile.html %}
 {% include formatting.html %}
