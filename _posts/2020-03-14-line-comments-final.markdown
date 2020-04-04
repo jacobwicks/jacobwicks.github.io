@@ -1338,7 +1338,11 @@ And that's how `lineComments` works on a Jekyll blog. I hope you find it useful.
 
 ## Extra: Snippets for VSCode
 
-If you use `lineComments` you'll probably end up making some sort of macro to insert codeblocks and comment divs. Here's snippets that you can install in VSCode.
+If you use `lineComments` you'll probably end up making some sort of macro to insert codeblocks and comment divs. Below are some snippets that you can install in VSCode.
+
+[How to create your own VSCode snippets](https://code.visualstudio.com/docs/editor/userdefinedsnippets#_create-your-own-snippets)
+
+After you create snippets, you can access the snippets by typing ctrl+space then typing the snippet prefix.
 
 {% raw %}
 	"lineComment codeBlock": {
@@ -1367,8 +1371,7 @@ If you use `lineComments` you'll probably end up making some sort of macro to in
 	}
 {% endraw %}
 
-[Create your own VSCode snippets](https://code.visualstudio.com/docs/editor/userdefinedsnippets#_create-your-own-snippets)
-After you create snippets, you can access snippets with ctrl+space.
+
 
 {% include lineCommentsMobile.html %}
 {% include formatting.html %}
