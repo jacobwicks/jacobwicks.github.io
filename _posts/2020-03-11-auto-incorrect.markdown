@@ -7,6 +7,8 @@ categories: javascript html css
 
 ![AutoIncorrect in Action](/assets//images/2020-03-11/AutoIncorrect.gif)
 
+[AutoIncorrect hosted on GitHub Pages](https://jacobwicks.github.io/autoIncorrect/)
+
 AutoIncorrect is a project that I made to practice using HTML, CSS, and JavaScript without any libraries like jQuery or React. It accepts an input string from the user and generates an output string that includes realistic typos. It models and displays a keyboard on the screen. It uses the keyboard model to create realistic typos based on the homerow keys, the error frequency and severity settings entered by the user, and the relative position and distance of keys from each other in the keyboard model. To give the feeling of working on an old computer it also animates through the input string, highlights keys on the keyboard display and shows a cursor highlight in both the input and output fields. And it uses the browser AudioContext to make beeping sounds.
 
 ## The Set Up
