@@ -1,11 +1,8 @@
 ---
 layout: post
-title: 'Flashcards: a TDD, TypeScript, and React Tutorial'
+title: 'How to get the Twitter OAuth 2 bearer token using Node.js'
 date: 2020-05-11 16:00:00 -0800
 ---
-
-# How to get the Twitter OAuth 2 bearer token using Node.js
-
 Note: There are two types of bearer tokens for twitter. OAuth 1.0 and OAuth 2.0. The OAuth 2.0 token is what you use to make your app take actions on Twitter. The OAuth 1.0 token is what you use to make your app take actions on twitter using credentials provided by your users. This writeup is about the OAuth 2.0 token. 
 
 Twitter documentation 1: [Application-only authentication and OAuth 2.0 Bearer Token](https://developer.twitter.com/en/docs/basics/authentication/api-reference/token)
