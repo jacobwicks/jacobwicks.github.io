@@ -108,3 +108,6 @@ Now you have the OAuth2 bearer token for your app.
 </div>
 
 Now you have the OAuth2 bearer token for your app! Save it as a string and you can use it to make requests to the Twitter API. Make sure to treat it like a password. Keep it secret and don't upload it to a public file or git repo.
+
+{% include lineCommentsMobile.html %}
+{% include formatting.html %}
