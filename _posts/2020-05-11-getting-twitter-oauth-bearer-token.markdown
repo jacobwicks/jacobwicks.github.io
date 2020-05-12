@@ -88,15 +88,18 @@ The [Twitter documentation](https://developer.twitter.com/en/docs/basics/authent
 Use the native [encodeURI](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI) method to RFC 1738 encode the key and secret.
 </div>
 
-<div class='lineComment' id='{block: getBearer, line: 14 }'>
+<div class='lineComment' id='{block: getBearer, line: 14 }'
+>
 As the example in the Twitter documentation](https://developer.twitter.com/en/docs/basics/authentication/oauth-2-0/application-only) shows, the 'Bearer Token credentials' is a string containing the encoded key, a ':', and the encoded secret. 
 </div>
 
-<div class='lineComment' id='{block: getBearer, line: 16}'>
+<div class='lineComment' id='{block: getBearer, line: 16}'
+>
 The Bearer Token credentials have to be encoded into base 64 before they are sent as part of the POST request. The answers on (this stackoverflow page)[https://stackoverflow.com/questions/6182315/how-to-do-base64-encoding-in-node-js] tell you how to use the native `Buffer` object to encode strings into base64.
 </div>
 
-<div class='lineComment' id='{block: getBearer, line: 36 }'>
+<div class='lineComment' id='{block: getBearer, line: 36 }'
+>
 Fetching is an [asynchronous function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function). Using the `await` keyword means we wait until the promise resolves before assigning the value to the variable.
 </div>
 
