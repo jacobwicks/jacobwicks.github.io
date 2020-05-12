@@ -76,7 +76,11 @@ const bearerToken = await response.json();
 console.log(JSON.stringify(bearerToken));
 {% endhighlight %}
 
-<div class='lineComment' id='{block: getBearer, line: 6 }'>
+<div class='lineComment' id='{
+    block: getBearer, 
+    line: 6 
+    }'
+    >
 The [Twitter documentation](https://developer.twitter.com/en/docs/basics/authentication/oauth-2-0/application-only) says that the key and secret need to be 'RFC 1738 encoded'. [What is RFC 1738 encoding?](https://stackoverflow.com/questions/44774233/encoding-a-string-as-per-rfc-1738-in-nodejs) RFC 1738 encoding [is how URLs are encoded](https://tools.ietf.org/html/rfc1738).
 </div>
 
