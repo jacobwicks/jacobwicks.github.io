@@ -76,6 +76,10 @@ const bearerToken = await response.json();
 console.log(JSON.stringify(bearerToken));
 {% endhighlight %}
 
+<div class='lineComment' id='{block: getBearer, line: 3 }'
+>
+Example strings from the Twitter docs
+</div>
 <div class='lineComment' id='{
     block: getBearer, 
     line: 6 
@@ -90,12 +94,32 @@ Use the native [encodeURI](https://developer.mozilla.org/en-US/docs/Web/JavaScri
 
 <div class='lineComment' id='{block: getBearer, line: 14 }'
 >
-As the example in the Twitter documentation](https://developer.twitter.com/en/docs/basics/authentication/oauth-2-0/application-only) shows, the 'Bearer Token credentials' is a string containing the encoded key, a ':', and the encoded secret. 
+As the example in the [Twitter documentation](https://developer.twitter.com/en/docs/basics/authentication/oauth-2-0/application-only) shows, the 'Bearer Token credentials' is a string containing the encoded key, a ':', and the encoded secret. 
 </div>
 
 <div class='lineComment' id='{block: getBearer, line: 16}'
 >
-The Bearer Token credentials have to be encoded into base 64 before they are sent as part of the POST request. The answers on (this stackoverflow page)[https://stackoverflow.com/questions/6182315/how-to-do-base64-encoding-in-node-js] tell you how to use the native `Buffer` object to encode strings into base64.
+The Bearer Token credentials have to be encoded into base 64 before they are sent as part of the POST request. The answers on [this stackoverflow page](https://stackoverflow.com/questions/6182315/how-to-do-base64-encoding-in-node-js) tell you how to use the native `Buffer` object to encode strings into base64.
+</div>
+
+<div class='lineComment' id='{block: getBearer, line: 22 }'
+>
+The options object for the fetch request. Defines headers, method, and body.
+</div>
+
+
+<div class='lineComment' id='{block: getBearer, line: 24 }'
+>
+gzip indicates compressed data.
+</div>
+
+<div class='lineComment' id='{block: getBearer, line: 27}'
+>
+The OAuth 2.0 token. You have to have the string `Basic` first.
+</div>
+
+<div class='lineComment' id='{block: getBearer, line: 33 }'>
+Tells OAuth that your application is request an access token to access its own resources, not on behalf of a user. grant_type parameter must be set to client_credentials.
 </div>
 
 <div class='lineComment' id='{block: getBearer, line: 36 }'
@@ -104,7 +128,7 @@ Fetching is an [asynchronous function](https://developer.mozilla.org/en-US/docs/
 </div>
 
 <div class='lineComment' id='{block: getBearer, line: 38 }'>
-Wait the `json()` method of the response object gives us the content of the response as a JSON object. It's also async, so await it. 
+The `json()` method of the response object gives us the content of the response as a JSON object. It's also async, so await it. 
 </div>
 
 <div class='lineComment' id='{block: getBearer, line: 40 }'>
