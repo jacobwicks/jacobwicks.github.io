@@ -1,0 +1,420 @@
+---
+layout: post
+title: 'Something Awful Forums Posting Bot'
+date: 2020-05-05 16:00:00 -0800
+---
+
+{% highlight javascript linenos %}
+blockName: firstExample
+//heres some really complicated code
+{% endhighlight %}
+
+<div class='lineComment' id='{block: firstExample, line: 1}'>
+This is an explanation of what's going on in line 1.
+</div>
+
+I decided to make a 'bot' to post on the SA forums. The SA Forums are an old school internet forum. They have a long and storied history, but structurally they are pretty different from modern web forums. These differences make it an interesting project to write a bot to post on them. The big thing is that there is no API.  
+
+This bot will initially have a few features, and if it doesn't get banned, I'll add more if other users request them. The thread it is monitoring is the thread in the left-wing politics forum for monitoring the activities of the Trump administration. This thread gets hundreds of posts a day, and is pretty loose with the rules, so it's ideal for live testing out bot features without anyone noticing anything.
+
+The bot will be set to run periodically- maybe every 15 minutes. It will fire up a web browser, log in to the forums, and check the Trump thread for new posts. It will read each post to figure out if someone has requested an action by the bot. The actions that the bot will start out being able to do are posting a misspelling of 'Trump,' making an image wider so that it looks distorted, and making an image redder so that it looks funny. I have already written code to generate realistic typos in my AutoIncorrect project, so I'll be incorporating that for the misspellings. 
+
+## Initial Features
+* Scans one thread
+* Reads all new posts
+* If posts contain one of the recognized instructions, perform the requested function
+* Misspelling of Trump
+* Make first image in the post wider
+* Make first image in the post redder
+
+## Later Features
+* Ability to scan array of threads instead of just one
+* Read Private Messages (PMs)
+* Responds to requests in PMs
+* Send reply PM with instructions for bot use
+* User can request 'emptyquote' by PM containing a postid
+
+## Construction
+I'll write it in TypeScript, and test with Jest. For browser functionality I'll use Puppeteer, a 'headless' chromium browser. The code will be stored on GitHub. I'll host the bot on Github Pages, if possible, and if not I'll put it on a hobby dyno at Heroku. 
+
+Typos will be generated using basically the code from my AutoIncorrect project, which I will convert to TypeScript. 
+
+Images will be manipulated and generated using the HTML5 canvas. Generated images will be hosted on Imgur. Imgur has an API that allows for automated uploading, hosting and accessing images, so that shouldn't present a major challenge. I thought about using an AWS s3 bucket, but I've done that before and I wanted to learn something new. Imgur is built spcecifically for hosting public images, unlike the s3 bucket which needs permissions setup. Also, images hosted on Imgur will stay up independent of me keeping the s3 bucket, which should be more durable if and when I lose interest in maintaining this thing.
+
+## TypeScript
+TypeScript is great, because it's typed. TypeScript is also a pain, because you have to set up the typing. It's good to keep in practice, and writing projects in TypeScript does prevent a lot of annoying bugs that can crop up when you use vanilla JavaScript.
+
+To running typescript files locally, use ts-node
+https://stackoverflow.com/questions/33535879/how-to-run-typescript-files-from-command-line
+. npm install -g ts-node makes ts-node your-script.ts a breeze.
+Note tho: ts-node does not support ES modules, so it's require all the way
+Some alterations to the TS-config file are needed to make Puppeteer run ok under ts-node. Mainly, setting the `target` to `es2020` in compilerOptions. 
+
+```
+"target": "es2020" 
+```
+
+## Development Path
+Like I said, I've already written code to generate realistic typos, so that part won't take too long. I'm pretty familiar with TypeScript and testing with Jest. So the new stuff will be Puppeteer, running Puppeteer, finding and manipulating elements using Puppeteer, and manipulating and generating images using the HTML5 canvas functionality. 
+
+The plan is to take the steps in roughly this order:
+* get an SA account for the bot
+* get Puppeteer running
+* get login functionality working
+* make a post
+* scan new posts in the thread for instructions
+* react to instructions by doing the requested action
+* first requested action- misspelling trump
+* post a random cat using the cat api
+* figure out how to use canvas to distort an image, stretching the width
+* figure out how to use canvas to change the color value of an image, making it redder
+* use imgur API to host images
+* implement second requested action- widening an image
+* implement third requested action- reddening an image
+
+Then either unveil the existence of the bot and let other users play with it, or implement the advanced features list, including scanning and responding to PMs.
+
+## The Bot Account
+Portmanteaus are en vogue for usernames, so we'll call this bot 'Patient Zero Cool.' It's a reference to the current covid pandemic, the movie character 'Zero Cool' from [Hackers](https://en.wikipedia.org/wiki/Hackers_(film)), and the medical concept of Patient Zero. Patient Zero is an interesting concept- the popular meaning is the first person to have a disease and spread it. But the origin of patient zero comes from a misunderstanding. A man in the HIV epidemic who was a prolific spreader was noted in some paperwork as 'Patient O' - 'O' as in the capital letter o, not the numeral 0. Anyway, we have our name. The account is purchased, along with an avatar.
+
+## Logging in
+So, we need the bot to be able to login to make a post. Let's take a look at the login page.
+
+For the SA forums, the login page is found at: https://forums.somethingawful.com/account.php?action=loginform
+
+The login page looks like this:
+
+There are three elements that we need to interact with on this page:
+Username
+password
+login button
+
+each of these fields has the class `bginput`. So we'll need to find them, enter the username and password, click the login button, then wait until the the browser refreshes and moves on to the url `forums.somethingawful.com`.
+
+## Telling if you're logged in or not
+If you're logged in, a link shows up on all forums pages with the innerText 'Log Out.' If you're logged out, a link shows up on all forums pages with the innerText '\*** LOG IN ***'. Exception: after you click the log out link and are logged out, the logout page still shows the 'Log Out' links. This could cause a false result, but I don't anticipate doing that with the bot so I'm not going to write code to handle it. 
+
+## Cookies
+Had to figure out which cookies were the ones that we wanted. Use page.cookies() to get an array of the cookies. Got the cookies before logging in. Logged in, filtered out the cookies that existed before logging in. There were 13 new cookies. 4 of them had human readable names, so I saved those as a JSON object. That worked, so I didn't do any further investigation.  
+
+I'm pretty sure the SA forums cookies last for like a year without expiring, so we should be pretty good to store them in the config.json file for the bot. The config.json file is a file that I put into the .gitignore. This means that git won't upload it to the repository, so it's where I can put sensitive information like passwords, cookies, and the API keys.
+
+## Scanning posts
+Ok, now that we're logging in with the stored cookies, let's take a look at the posts. To start with, the bot is only going to scan one thread. Later we'll give it the ability to scan an array of threads, so you can point it at as many threads as you care to. At that point I'll set the bot up to scan both the Trump thread and the Covid-19 thread, another high volume loosely moderated thread that is remade monthly.
+
+The SA Forums run on [PHP](https://www.php.net/), which is an old scripting language that kind of works to organize and serve up webpages. Thread addresses are static once they are created, and take this form:
+```
+https://forums.somethingawful.com/showthread.php?threadid=3921857
+```
+The number after `threadid=` is a unique number that leads you to a single thread on the forums.
+
+{% highlight javascript linenos%}
+blockName: threadIds
+//the trump threadId changes every month when the thread gets closed and a new one starts
+const trumpThreadId = '3921885';
+
+//this links to the last read post in the trump thread
+const trumpThreadLastRead = `https://forums.somethingawful.com/showthread.php?threadid=${trumpThreadId}&goto=newpost`;
+
+const replyToTrumpThread = `https://forums.somethingawful.com/newreply.php?action=newreply&threadid=${trumpThreadId}`;
+{% endhighlight %}
+
+# Viewing New Posts
+The forums software tracks which post you last read in a thread. To start reading a thread, you can go to 
+```
+https://forums.somethingawful.com/showthread.php?threadid=3921857&goto=newpost
+```
+
+See the `&goto=newpost` there? Navigating to that address will resolve to the address of the newest unread post in the thread. For example:
+
+```
+https://forums.somethingawful.com/showthread.php?noseen=0&threadid=3921857&perpage=40&pagenumber=219#pti1
+```
+So there's a few things going on here. 
+
+The first bit, `perpage=40`, doesn't matter for our purposes. What it means is that 40 posts are shown per page. 40 is the default and you can't raise it any higher, so 40 post pages are the standard that everyone uses when talking about the threads. I think you can lower the number and it will be effective but... I haven't ever done that.
+
+`pageNumber=219`: In this example, the first unread post was on page 219. 
+
+`#pti13`: In this example, the first unread post was post 13 on the page. The pound sign tells us that we're looking at a reference to an anchor element (aka 'link', HTML \<a>) on the page. Each post has an anchor element. The browser uses the anchor element to adjust the user's view so that they start out looking at that element.
+
+Ok, so we want the bot to 
+1. Navigate to the first unread post since the last time it read the thread
+2. Strip out the post number from the url in the address bar, which will let us ignore any posts on this page that have already been read
+3. Scrape all the posts and filter out the posts that have already been read
+4. If there is another page in the thread, navigate to it and scrape all the posts 
+5. Repeat 4 until there are no more unread posts 
+6. Process each post, and if the post contains a valid bot instruction, do what it says
+
+# Navigating to the first unread post
+Resolve the address bar. Pull the page number and post anchor from the address bard.
+
+# Get the Post Number From the Address Bar
+
+# Scrape Posts From First Unread Page
+
+# Get Posts From All Other Unread Pages
+
+# Limiting the Scope
+As I was writing this code, I didn't bother to set up a test page. I was just running the code locally and actually using the bot account to scrape the posts from the live forums thread. I figured this would help reveal any issues or problems with the way I was doing things. I was using my account to post instructions that the bot should recognize, and I thought it would be good to add a way to limit the set of posts that the bot looks at. 
+<details><summary markdown='span'>Limit scan range</summary>
+{% highlight ts linenos%}
+blockName: limit
+interface LimitProps {
+    startPage: number;
+    startPost?: number;
+    stopPage?: number;
+    stopPost?: number;
+}
+
+//if no limits are provided,
+//use this dummy object as the destructuring target
+const noLimits = {
+    startPage: undefined,
+    startPost: undefined,
+    stopPage: undefined,
+    stopPost: undefined,
+};
+
+{% endhighlight %}
+</details><br/>
+
+<details><summary markdown='span'>Get New Posts From Thread</summary>
+{% highlight ts linenos%}
+blockName: getNewPostsFromThread
+//gets all new posts from a thread
+export const getNewPostsFromThread = async ({
+    page,
+    limit,
+    threadId,
+}: {
+    //puppeteer page object
+    page: Page;
+
+    //limits on what page, posts to scan
+    limit?: LimitProps;
+
+    //the unique id of the target thread
+    threadId: number;
+}): Promise<Post[]> => {
+    //get limits by destructuring limit prop
+    const { startPage, startPost, stopPage, stopPost } = limit || noLimits;
+
+    //generate the last read url
+    const lastReadPostUrl = threadLastRead(threadId);
+
+    //navigate to the lastReadPost url
+    await page.goto(lastReadPostUrl, {
+        waitUntil: 'networkidle0',
+    });
+
+    //url with search parameters
+    //NOTE: resolves to #lastpost if its the last post. In that case, you don't need to scan
+    const resolvedUrl = await page.evaluate(() => window.location.href);
+
+    //starting page
+    //takes limit value if provided, else
+    //starts on the last unread page
+    const pageNumber =
+        startPage !== undefined ? startPage : getPageNumber(resolvedUrl);
+
+    //starting post
+    const postNumber =
+        startPost !== undefined ? startPost : getPostNumber(resolvedUrl);
+
+    //end page
+    const lastPageNumber =
+        stopPage !== undefined ? stopPage : await getLastPageNumber(page);
+
+    //if the last read post was the last post in the thread, no new posts
+    //return empty array
+    if (postNumber === 'lastpost' || postNumber === undefined) return [];
+
+    //if there's a page number, proceed
+    if (pageNumber) {
+        const remainingPages = [];
+
+        //create an array with the pageNumbers to be scanned
+        for (let page = pageNumber; page <= lastPageNumber; page++) {
+            remainingPages.push(page);
+        }
+
+        //reduce the array of pageNumbers
+        //to an array of the posts from those pages
+        const posts = await remainingPages.reduce(
+            async (previousPosts, currentPageNumber, index) => {
+                //reduce accumulator is a promise
+                //wait for accumulator to resolve
+                const allPosts = await previousPosts;
+
+                //wait for posts from the current page number
+                let currentPosts = await getPostsFromPageNumber({
+                    page,
+                    pageNumber: currentPageNumber,
+                    threadId,
+                });
+
+                //if limits defined a page and post to stop on
+                //then slice the array of posts from that page
+                if (
+                    stopPage !== undefined &&
+                    stopPost !== undefined &&
+                    currentPageNumber === stopPage
+                ) {
+                    currentPosts = currentPosts.slice(stopPost);
+                }
+
+                //first page currentPosts will be sliced at the last read post number
+                //to stop the bot from reacting twice to the same posts
+                return index === 0
+                    ? [...allPosts, ...currentPosts.slice(postNumber as number)]
+                    : [...allPosts, ...currentPosts];
+            },
+            //type the accumulator as an array of Post objects
+            Promise.resolve<Post[]>([])
+        );
+
+        return posts;
+    } else {
+        //if no page number, log error
+        throw new Error('getNewPostsFromThread failed to find a pageNumber');
+    }
+};
+{% endhighlight %}
+</details><br/>
+# Process Posts
+
+# Typing a post
+All these posts involve typing a post.
+<details><summary markdown='span'>typePost.ts types posts!</summary>
+{% highlight ts linenos%}
+blockName: typePost
+interface typePostProps {
+    postContent: string;
+    page: Page;
+    postId: string;
+    threadId: string;
+}
+
+//types a post and hits the submit reply button
+const typePost = async ({
+    postContent,
+    page,
+    postId,
+    threadId,
+}: typePostProps) => {
+    const address = postId
+        ? replyToPost({ postId, threadId })
+        : replyToThread(threadId);
+
+    //navigate to the reply page
+    await page.goto(address, {
+        waitUntil: 'networkidle0',
+    });
+
+    //use querySelector to get the textarea where you type the post
+    //post is a puppeteer 'elementHandle'
+    const post = await page.$('textarea');
+
+    if (post) {
+        //elementHandles have available methods, including .type()
+        //.type() allows you to type text into the element that the elementHandle refers to
+        await post.type(postContent);
+
+        //querySelectorAll for input type = submit gets us the buttons
+        const submits = await page.$$('input[type="submit"]');
+
+        //the submit reply button is second in the array
+        const submitReply = [...submits][1];
+
+        //click submit reply to post!
+        submitReply.click();
+    } else {
+        throw new Error('typePost Unable to find post');
+    }
+};
+
+export default typePost;
+{% endhighlight %}
+</details><br/> 
+
+
+
+## Posting a Misspelling of 'Trump'
+Misspelling Trump is, I am assured, the height of comedy.
+
+## Posting a Random Cat
+I was trying to think of what useful things the bot could do besides automatically misspell trump, and I thought of posting cat pictures. Always makes me feel better to see a cat! One quick google for 'random cat api' and I located [the cat api](https://thecatapi.com/), an api that provids cats as a service.
+
+# Communicating with an API
+To get data from an api you need to contact the api, wait for the response, then decode the response. There's a lot of ways to use Node to make API requests. I decided not to use the standard 'https' library because it doesn't support async await. I decided to use (node-fetch)[https://www.npmjs.com/package/node-fetch] because it supports async/await, is simple to use, popular, and works both in node and in the browser. Working in both node and the browser means that if eventually we want to make fetch requests inside of the Puppeteer browser, we'll be able to use the same commands by exposing the node-fetch function to the browser object. I don't know that it will end up being a capability that I use, but it's nice to have the option.
+
+# Awaiting inside for loops
+Array.forEach doesn't work with await, or at least doesn't work like you'd hope.
+
+# difference betweeen for... of and for... in 
+Haha, good one MDN
+
+# Solution: use await For ... of!
+Awaiting for of lets you await actions inside a loop. Like, the loop that processes all the new posts in the threads being watched. 
+
+## Images
+# wider
+If the post quotes an image, and 
+the body of the post just says 'wider'
+then
+* take the image - jpg or png
+A couple of the bot functions involve modifying an image from the user's post. We only want to get the first image, if there is one. The bot doesn't need to be sophisticated enough to grab multiple images. 
+
+Most of the time, the the user will be quoting an image from another user. To get the image from a quote, we first use the querySelectorAll to find [blockquote](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/blockquote) elements. Then, if there are quotes, use querySelector on the first quote to find the first image inside it.  
+
+<details><summary markdown='span'>Summary</summary>
+{% highlight javascript linenos%}
+blockName: getImage
+const quotes = [...post.querySelectorAll('blockquote')];
+
+const image =   !!quotes.length &&
+                !!quotes[0].querySelector('img') &&
+                quotes[0].querySelector('img').src;
+
+{% endhighlight %}
+</details><br/>
+
+<div class='lineComment' id='{block: getImage, line: 1 }'>
+Use [querySelectorAll](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll) to find the quotes. Use the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax) to make a JavaScript array. 
+</div>
+
+<div class='lineComment' id='{block: getImage, line: 3}'>
+You can run [querySelector](https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector) on elements to find elements inside them. If there are quotes in the post, look through the first one to find an 'img' element.
+</div>
+
+Casting HTMLElements to input elements
+https://stackoverflow.com/questions/12686927/typescript-casting-htmlelement
+By default, queries return collections of elements. But elements don't have a value property. Inputs do. To cast to inputs, use `<HTMLCollectionOf<HTMLInputElement>>`.
+https://stackoverflow.com/questions/12989741/the-property-value-does-not-exist-on-value-of-type-htmlelement
+
+* use canvas to make it wider
+* upload it to imgur
+* reply, quoting the post
+* add the widened image from imgur to the reply
+
+# redder
+If the post quotes an image, and 
+the body of the post just says 'redder'
+then
+* take the image - jpg or png
+To get the source of the image
+* use canvas to make it redder
+* upload it to imgur
+* reply, quoting the post
+* add the widened image from imgur to the reply
+
+## Text
+# trump
+
+# emptyquote
+
+
+{% include lineCommentsMobile.html %}
+{% include formatting.html %}
+
