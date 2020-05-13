@@ -33,6 +33,9 @@ The bot will be set to run periodically- maybe every 15 minutes. It will fire up
 * Responds to requests in PMs
 * Send reply PM with instructions for bot use
 * User can request 'emptyquote' by PM containing a postid
+* other interactions with individual posts
+* image archive feature- collects submitted images in imgur album, posts at random on request
+* Scan user control panel for list of threads
 
 ## Construction
 I'll write it in TypeScript, and test with Jest. For browser functionality I'll use Puppeteer, a 'headless' chromium browser. The code will be stored on GitHub. I'll host the bot on Github Pages, if possible, and if not I'll put it on a hobby dyno at Heroku. 
@@ -76,6 +79,12 @@ Then either unveil the existence of the bot and let other users play with it, or
 
 ## The Bot Account
 Portmanteaus are en vogue for usernames, so we'll call this bot 'Patient Zero Cool.' It's a reference to the current covid pandemic, the movie character 'Zero Cool' from [Hackers](https://en.wikipedia.org/wiki/Hackers_(film)), and the medical concept of Patient Zero. Patient Zero is an interesting concept- the popular meaning is the first person to have a disease and spread it. But the origin of patient zero comes from a misunderstanding. A man in the HIV epidemic who was a prolific spreader was noted in some paperwork as 'Patient O' - 'O' as in the capital letter o, not the numeral 0. Anyway, we have our name. The account is purchased, along with an avatar.
+
+## Puppeteer 
+
+# Setting up Puppeteer
+
+* Disable the slow stuff
 
 ## Logging in
 So, we need the bot to be able to login to make a post. Let's take a look at the login page.
@@ -363,6 +372,10 @@ Awaiting for of lets you await actions inside a loop. Like, the loop that proces
 If the post quotes an image, and 
 the body of the post just says 'wider'
 then
+
+We'll use the HTML5 canvas object to manipulate the images. Use [node-canvas](https://www.npmjs.com/package/canvas) to access a version of the canvas without using the window object.
+
+
 * take the image - jpg or png
 A couple of the bot functions involve modifying an image from the user's post. We only want to get the first image, if there is one. The bot doesn't need to be sophisticated enough to grab multiple images. 
 
@@ -409,12 +422,161 @@ To get the source of the image
 * reply, quoting the post
 * add the widened image from imgur to the reply
 
+# Using Canvas to Make Image Redder
+We basically look at each red pixel in the image, divide the value by 255, then multiply the value by 255 + the desired increase in redness.
+
+<details><summary markdown='span'>Use Math.random() to get a number between 100 and 255</summary>
+{% highlight javascript linenos%}
+blockName: getRedderBy
+//returns number between 100 and 255
+const getRedderBy = () => Math.floor(Math.random() * (255 - 100 + 1) + 100);
+{% endhighlight %}
+</details><br/>
+
+<details><summary markdown='span'>Redden an image and return a Buffer</summary>
+{% highlight javascript linenos%}
+blockName: redden
+export const redden = async (imageUrl: string) => {
+    //get the amount to redden the image by
+    const redFaction = getRedderBy();
+
+    //load image from provided url
+    const image = await loadImage(imageUrl);
+
+    //create the canvas object. Width and Height of original image
+    const canvas = createCanvas(image.width, image.height);
+
+    //2d context to manupulate image
+    const context = canvas.getContext('2d');
+
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const originalPixels = context.getImageData(
+        0,
+        0,
+        image.width,
+        image.height
+    );
+    const currentPixels = context.getImageData(0, 0, image.width, image.height);
+
+    image.onload = null;
+
+    if (!originalPixels) return; // Check if image has loaded
+
+    for (
+        //start at 0, go to the length of the pixel data
+        let redPixel = 0, dataLength = originalPixels.data.length;
+        //once we reach the end of the data, stop
+        redPixel < dataLength;
+        //skip forward by 4 pixels
+        redPixel += 4
+    ) {
+        // transparent pixel = 0.
+        //If it's not a transparent pixel, then increase redness
+        if (currentPixels.data[redPixel + 3] > 0) {
+            //divide original red channel value by 255
+            //then multiply by 255 + redFaction variable, which is 100-255
+            currentPixels.data[redPixel] =
+                (originalPixels.data[redPixel] / 255) * (255 + redFaction);
+        }
+    }
+
+    //load reddened pixels into context
+    context.putImageData(currentPixels, 0, 0);
+
+    //create buffer from cotext
+    const redImageBuffer = canvas.toBuffer();
+
+    return redImageBuffer;
+};
+{% endhighlight %}
+</details><br/>
+
 ## Text
 # trump
 
 # emptyquote
 
+# Using setInterval to run every so often
 
-{% include lineCommentsMobile.html %}
+
+# Getting the smilies
+SA has a lot of smilies. 
+The full list is on this page: https://forums.somethingawful.com/misc.php?action=showsmilies
+To get the list, I loaded the past, selected all the text, and copied and pasted it into a .txt file.
+
+Then I opened the text file in notepad. I deleted the small bits of extra text from the page, leaving only the smilies. Then I copied and pasted the entire text document as a string literal inside the backtick \` characters.
+
+After that, just use `string.split()` to turn the string into an array. Split it on the newLine characters. `Array.filter()` to remove the blank strings. Then `JSON.stringify()` the array and use [`fs`](https://nodejs.org/api/fs.html) to save it as a file.
+
+{% highlight javascript linenos%}
+blockName: smilies
+
+const smileyString = `...entire smiley text document`
+
+const arr = smileyString.split('\n');
+
+const smileyArray = arr.filter((item) => !!item.length);
+
+const smilies = JSON.stringify(smileyArray);
+
+const fs = require('fs');
+
+fs.writeFile('smilies.json', smilies, function (err) {
+    if (err) {
+        return console.log(err);
+    }
+    console.log('The file was saved!');
+});
+{% endhighlight %}
+
+# Imgur api
+https://api.imgur.com/oauth2/addclient
+For public read-only and anonymous resources, such as getting image info, looking up user comments, etc. all you need to do is send an authorization header with your client_id in your requests. This also works if you'd like to upload images anonymously (without the image being tied to an account), or if you'd like to create an anonymous album. This lets us know which application is accessing the API.
+To make formData in NodeJs, installed library [node form-data](https://www.npmjs.com/package/form-data) 
+
+# Getting the death toll from the CDC page
+oh god this is so depressing
+It's here: https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/cases-in-us.html
+Inspecting the page shows that the totals are in the only two elements on the page with the classname 'callout'.
+![ugh](/assets//images/2020-05-06/cdc.png)
+
+Getting the callouts is pretty simple:
+<details><summary markdown='span'>Getting the Covid Case Numbers and Death Toll from the CDC</summary>
+{% highlight ts linenos%}
+blockName: getDeathToll
+const getDeathToll = async (page: Page) => {
+    await page.goto(deathToll, {
+        waitUntil: 'networkidle0',
+    });
+
+    return await page.evaluate(() => {
+        const callouts = <HTMLSpanElement[]>[
+            ...document.getElementsByClassName('callout'),
+        ];
+
+        const getNewAndTotal = (span: HTMLSpanElement) => {
+            const arr = span.innerText.split(' ');
+            return {
+                new: arr[3],
+                total: arr[2],
+            };
+        };
+
+        const cases = getNewAndTotal(callouts[0]);
+
+        const deaths = getNewAndTotal(callouts[1]);
+
+        return {
+            cases,
+            deaths,
+        };
+    });
+};
+{% endhighlight %}
+</details><br/>
+
+{% include lineCommentsMobile.html %};
 {% include formatting.html %}
+
 
