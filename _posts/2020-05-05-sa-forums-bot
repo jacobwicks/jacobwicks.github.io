@@ -574,7 +574,13 @@ const getDeathToll = async (page: Page) => {
     });
 };
 {% endhighlight %}
-</details><br/>
+</details><br/> 
+
+# Making typos
+To make typos, I'll use the guts of my `AutoIncorrect` project. AutoIncorrect was written in JavaScript, and I'm not going to write type declarations for it because it's not a good use of my time. But when I try to import the JS files into a .ts file, I get errors!
+error: "SyntaxError: Cannot use import statement outside a module"
+This is because the compiler thinks all these JavaScript files are untyped, are not modules, and because they aren't modules, can't use the import statement.
+I'm going with the "Kind of terrible fix #4" from this page: https://blog.atomist.com/declaration-file-fix/
 
 {% include lineCommentsMobile.html %};
 {% include formatting.html %}
