@@ -6,11 +6,11 @@ date: 2020-06-19 12:00:00 -0800
 
 This post will show you how to render markdown in a React app and automatically resize images in the markdown. It uses [TypeScript](https://www.typescriptlang.org/), [react-markdown](https://www.npmjs.com/package/react-markdown), and [React Hooks](https://reactjs.org/docs/hooks-intro.html). 
 
-The git repo is here: [https://github.com/jacobwicks/markdownreact]
+The git repo is here: <https://github.com/jacobwicks/markdownreact>
 
-Credit to "mrm007" who wrote this post on how to make a custom image renderer for react-markdown: [https://github.com/rexxars/react-markdown/issues/384#issuecomment-577917355]
+Credit to "mrm007" who wrote this post on how to make a custom image renderer for react-markdown: <https://github.com/rexxars/react-markdown/issues/384#issuecomment-577917355>
 
-Credit to "Marco Antônio" and "Jeffrey Terry" who wrote this stackOverflow answer on how to get the width of a react element [https://stackoverflow.com/questions/43817118/how-to-get-the-width-of-a-react-element/59989768#59989768]
+Credit to "Marco Antônio" and "Jeffrey Terry" who wrote this stackOverflow answer on how to get the width of a react element <https://stackoverflow.com/questions/43817118/how-to-get-the-width-of-a-react-element/59989768#59989768>
 
 # Starting the new project
 
@@ -58,13 +58,13 @@ blockName: app
 function App() {
     return (
         <div
-            style={{
+{% raw %}            style={{
                 border: 'solid',
                 borderRadius: 15,
                 marginLeft: 100,
                 marginTop: 50,
                 width: 500,
-            }}
+            }} {% endraw %}
         >
             Hello World
         </div>
@@ -75,6 +75,11 @@ function App() {
 <div class='lineComment' id='{block: app, line: 9 }'>
 The div has a fixed width of 500. This is narrower than the cat image in the markdown, which is 700 pixels wide.
 </div>
+
+To run the react app, go to the directory and run "npm start"
+```
+$ npm start
+```
 
 The div will look like this:
 
@@ -89,7 +94,7 @@ import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown/with-html';
 {% endhighlight %}
 
-<div class='lineComment' id='{block: imports1 , line: 2}'>
+<div class='lineComment' id='{block: imports1, line: 2}'>
 We use HTML in our markdown file, so we are importing ReactMarkdown with the html parser turned on. If we weren't using HTML we could just import it from 'react-markdown'.
 </div>
 
@@ -132,7 +137,7 @@ We use the `useState` hook to hold the input string that the `ReactMarkdown` com
 </div>
 
 <div class='lineComment' id='{block: exampleMarkdown, line: 4}'>
-The getInput is an async function. We use the await command to wait for asnychronous operations to complete before using their results for the next step.  
+The getInput is an async function. We use the await command to wait for [asynchronous operations](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous) to complete before using their results for the next step.  
 </div>
 
 <div class='lineComment' id='{block: exampleMarkdown, line: 6 }'>
@@ -174,13 +179,13 @@ blockName:
 function App() {
     return (
         <div
-            style={{
+{% raw %}            style={{
                 border: 'solid',
                 borderRadius: 15,
                 marginLeft: 100,
                 marginTop: 50,
                 width: 500,
-            }}
+            }} {% endraw %}
         >
             <ExampleMarkdown/>
         </div>
@@ -203,9 +208,13 @@ Limit width to 100 and height to 200
 
 Limit just width to 250
 ![](./pic/pic1s.png =250x)
+
+You can't use this syntax in React-Markdown. 
 ```
 
-But React-Markdown does let you write your own functions to display each type of node that it generates. So we can write our own `renderer` function for image nodes and pass that to the `ReactMarkdown` component. Our custom render function will limit the max width of images. Then when `ReactMarkdown` finds an image, it will send that image to our function, and the image width will be limited like we want.
+But React-Markdown does let you write your own functions to display each type of node that it generates. So we can write our own `renderer` function for image nodes and pass that to the `ReactMarkdown` component. 
+
+Our custom render function will limit the max width of images. Then when `ReactMarkdown` finds an image, it will send that image to our function, and the image width will be limited like we want.
 
 # Add Custom Renderer to ExampleMarkdown
 Write this custom render function inside of the `ExampleMarkdown` component. Our container div is 500 pixels wide, so we'll set the max width of the images to be 475 pixels. Pass the renderers object that contains our custom image function to `ReactMarkdown`.
@@ -229,7 +238,7 @@ blockName: imageRenderer
                 alt={alt} 
                 src={src} 
                 title={title} 
-                style={{ maxWidth: 475 }} />
+                {% raw %}style={{ maxWidth: 475 }} {% endraw %} />
         ),
     };
 
@@ -252,20 +261,20 @@ Run it, and you'll see the cat now fits in the box!
 That's great. And it works because we know that the div is 500 pixels wide, so a picture 475 pixels wide will fit. But it's pretty common to use elements that don't have a fixed size, and change based on how big the screen is. Would that cause any problems?
 
 # Change the Container Div to Resize with The Screen
-Change width from 500 pixels to 50 vw. This will make the div width half of the width of the browser window.
+Change width from 500 pixels to 50 vw. This will make the div width half of the width of the browser window. [vw is a CSS unit](https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units) equal to 1 percent of the width of the viewport.
 
 {% highlight ts linenos%}
 blockName: divWithVw
 function App() {
     return (
         <div
-            style={{
+          {% raw %}  style={{
                 border: 'solid',
                 borderRadius: 15,
                 marginLeft: 100,
                 marginTop: 50,
                 width: '50vw',
-            }}
+            }} {% endraw %}
         >
             <ExampleMarkdown />
         </div>
@@ -278,7 +287,7 @@ function App() {
 </div>
 
 Ok, now the cat still fits. But play with changing the size of the browser window and see what happens.
-![Still Fits](/assets//images/2020-06-19/stillFits.png)
+![Resize Fail](/assets//images/2020-06-19/resizeFail.gif)
 
 When you change the size of the browser window the size of the container div will change. But your cat stays the same width! Eventually your div will be too skinny for the cat.
 
@@ -290,7 +299,7 @@ That doesn't look good. How can we fix this problem?
 
 Add the React [`useRef`](https://reactjs.org/docs/hooks-reference.html#useref) and [`useCallback`](https://reactjs.org/docs/hooks-reference.html#usecallback) hooks to the imports. 
 
-`useRef` gives us a way to generate a `ref` to our div component. This will let us keep track of when the div changes size. If you are really curious about what a ref is, the React docs explain it here: [https://reactjs.org/docs/refs-and-the-dom.html] 
+`useRef` gives us a way to generate a `ref` to our div component. This will let us keep track of when the div changes size. If you are really curious about what a ref is, the React docs explain it here: <https://reactjs.org/docs/refs-and-the-dom.html> 
 
 `useCallback` wraps a function and makes sure the function only runs if it needs to. When you call functions from inside hooks, you'll end up using `useCallback` to stop the hooks from running too often and causing problems.
 
@@ -352,7 +361,7 @@ React will still run it, but will give you an error.
 </div>
 
 <div class='lineComment' id='{block: useResize, line:6 }'>
-`useEffect` hooks will run whenever the value of one of their dependencies changes. This hook will run whenever the value of `myRef` changes. This hook will also run whenever the value of the `getWidth` function changes.
+`useEffect` hooks will run whenever the value of one of their dependencies changes. This hook will run whenever the value of `myRef` changes. 
 </div>
 
 <div class='lineComment' id='{block: useResize, line: 7 }'>
@@ -393,13 +402,13 @@ function App() {
     return (
         <div
             ref={divRef}
-            style={{
+            {% raw %} style={{
                 border: 'solid',
                 borderRadius: 15,
                 marginLeft: 100,
                 marginTop: 50,
                 width: '50vw',
-            }}
+            }} {% endraw %}
         >
             <ExampleMarkdown />
         </div>
@@ -421,13 +430,13 @@ const ExampleMarkdown = ({ maxWidth }: { maxWidth?: number }) => {
 And change the image renderer from using a static width of 475
 
 {% highlight ts %}        
-    }) => <img alt={alt} src={src} title={title} style={{ maxWidth: 475 }} />,
+    }) => <img alt={alt} src={src} title={title} style={% raw %}{{ maxWidth: 475 }}{% endraw %} />,
 {% endhighlight %}
 
 to using the variable `maxWidth`
 
 {% highlight ts %}
-        }) => <img alt={alt} src={src} title={title} style={{ maxWidth }} />,
+        }) => <img alt={alt} src={src} title={title} style={% raw %}{{ maxWidth }}{% endraw %} />,
 {% endhighlight %}
 
 Finally, change the `App` to pass `maxWidth` into `ExampleMarkdown`.
@@ -441,13 +450,13 @@ function App() {
     return (
         <div
             ref={divRef}
-            style={{
+            {% raw %}style={{
                 border: 'solid',
                 borderRadius: 15,
                 marginLeft: 100,
                 marginTop: 50,
-                width: '80vh',
-            }}
+                width: '50vw',
+            }}{% endraw %}
         >
             <ExampleMarkdown maxWidth={maxWidth} />
         </div>
