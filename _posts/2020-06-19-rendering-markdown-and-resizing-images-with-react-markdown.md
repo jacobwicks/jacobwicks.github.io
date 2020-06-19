@@ -428,7 +428,7 @@ to using the variable `maxWidth`
 
 {% highlight ts %}
         }) => <img alt={alt} src={src} title={title} style={{ maxWidth }} />,
-{% endhighlight %
+{% endhighlight %}
 
 Finally, change the `App` to pass `maxWidth` into `ExampleMarkdown`.
 
