@@ -1,0 +1,79 @@
+Issues that have come up programming the bot
+
+1. Puppeteer
+finding elements, etc
+
+2. Swiping images with react context and framer motion
+CSS is important
+The clever thing is holding a reference to the last image
+
+3. Server side events
+
+4. API Pattern with context
+Flow
+* Starting conditions:
+info is stored server side
+API exposes routes
+Frontend starts, contacts API
+API sends info to Frontend
+frontend gets response 
+frontend dispatches action containing repsonse data to context
+context loads data
+context provides data to components
+components shows data
+
+* User
+user views info through components
+user clicks button/changes input
+component calls changeFunction
+component passes data to changeFunction
+component also passes dispatch to changeFunction
+changeFunction dispatches action to context
+context processes action
+context loads data from action
+context provides data to components
+components show data - instant response!
+
+changeFunction calls api, waits for response
+
+* API
+API recieves request
+API processes request
+This can include call to other API
+this can include file writing
+this can include DB call
+API generates response
+API sends response to changeFunction
+API response can have success/fail/data/error
+
+* API Response Received
+changeFunction receives response from API
+If it was successful, changeFunction doesn't usually need to do anything
+The change was already made
+There might be more information to add to the display
+In that case, changeFunction will dispatch actions to context containing the new data
+Context processes the actions, loads the data
+and displays it to user
+Optional: Have a component that notifies the user of successful action
+
+* IF API responds with failure
+changeFunction receives failed response from API
+Now you need to do two things
+1. Undo the failed action 
+2. Tell the user that the action failed
+
+* Undoing the failed action
+Undoing the failed action is pretty easy, because you are stil inside changeFunction
+changeFunction still has access to all the old values of the data that was changed
+so to change it back, you just dispatch actions to context to set the values to the old values
+context processes the actions
+context loads the old data
+context provides the data to components
+components display data to user
+That's it!
+
+* telling the user that the action failed
+Maybe have a context for toasts
+with a component that shows up based on what's currently in the context
+
+5. Testing context with jest
