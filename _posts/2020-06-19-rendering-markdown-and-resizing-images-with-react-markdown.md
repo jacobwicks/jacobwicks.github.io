@@ -4,7 +4,7 @@ title: 'Rendering markdown and resizing images with React-Markdown'
 date: 2020-06-19 12:00:00 -0800
 ---
 
-This post will show you how to render markdown in a React app and automatically resize images in the markdown. It uses [TypeScript](https://www.typescriptlang.org/), [react-markdown](https://www.npmjs.com/package/react-markdown), and [React Hooks](https://reactjs.org/docs/hooks-intro.html). 
+This post will show you how to render [markdown](https://en.wikipedia.org/wiki/Markdown) in a React app and automatically resize images in the markdown. It uses [TypeScript](https://www.typescriptlang.org/), [react-markdown](https://www.npmjs.com/package/react-markdown), and [React Hooks](https://reactjs.org/docs/hooks-intro.html). 
 
 The git repo is here: <https://github.com/jacobwicks/markdownreact>
 
