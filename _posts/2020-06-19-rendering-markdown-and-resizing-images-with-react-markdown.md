@@ -54,7 +54,7 @@ Create a new markdown file `src/catInstructions.md`. Copy and paste the content 
 
 # Rewrite App.tsx
 
-Replace the App.tsx component with this container div.
+Replace the `App` component with this container div.
 
 {% highlight ts linenos%}
 blockName: app
@@ -140,7 +140,7 @@ We use the `useState` hook to hold the input string that the `ReactMarkdown` com
 </div>
 
 <div class='lineComment' id='{block: exampleMarkdown, line: 4}'>
-The getInput is an async function. We use the await command to wait for [asynchronous operations](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous) to complete before using their results for the next step.  
+`getInput` is an async function. We use the await command to wait for [asynchronous operations](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous) to complete before using their results for the next step.  
 </div>
 
 <div class='lineComment' id='{block: exampleMarkdown, line: 6 }'>
