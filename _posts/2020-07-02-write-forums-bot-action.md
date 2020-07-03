@@ -158,7 +158,6 @@ const processor = {
     hello: postHelloWorld
 };
 ```
-f
 
 {% highlight javascript linenos%}
 blockName: relaxedSearch 
