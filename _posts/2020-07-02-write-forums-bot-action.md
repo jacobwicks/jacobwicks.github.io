@@ -1,3 +1,8 @@
+---
+layout: post
+title: 'Make a Custom Action for the ForumsBot'
+date: 2020-07-02 12:00:00 -0800
+---
 ## Write A Custom Action for the Forums Posting Bot
 
 Writing your own action for the forums posting bot is fairly simple. The bot uses [glob](https://www.npmjs.com/package/glob) to look through folders to find the actions, so you don't need to modify any other files. You just need to create a new folder for your action with the action code in index.ts.
