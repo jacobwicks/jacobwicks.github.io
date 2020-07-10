@@ -6,16 +6,6 @@ date: 2020-07-01 12:00:00 -0800
 
 ![bot running](/assets//images/2020-07-01/botRunning.gif)
 
-[The forums bot repo](https://github.com/jacobwicks/forumsBot)
-
-[Example Control Panel](https://jacobwicks.github.io/controlPanelExample/)
-
-[Example Bot Instructions](https://jacobwicks.github.io/forumsBotInstructions/)
-
-[Write a custom action for the bot]({% post_url 2020-07-02-write-forums-bot-action %})
-
-[Get API keys for bot actions]({% post_url 2020-07-07-forums-bot-api-keys %})
-
 # The Forums Bot
 The forums bot is a program that automatically reads and responds to posts on [the Awful Forums](https://forums.somethingawful.com). It can be customized to do different actions. You can control it using the command line or with the control panel. Here's [an example version of the bot control panel](https://jacobwicks.github.io/exampleControlPanel) hosted on GitHub pages. 
 
