@@ -3,25 +3,138 @@ layout: post
 title: 'Make a Custom Action for the ForumsBot'
 date: 2020-07-02 12:00:00 -0800
 ---
+
+[The forums bot repo](https://github.com/jacobwicks/forumsBot)
+
+[Forums Bot Installation instructions]({% post_url 2020-07-01-forums-posting-bot %})
+
+[Example Control Panel](https://jacobwicks.github.io/controlPanelExample/)
+
+[Example Bot Instructions](https://jacobwicks.github.io/forumsBotInstructions/)
+
+[Get API keys for bot actions]({% post_url 2020-07-07-forums-bot-api-keys %})
+
 ## Write A Custom Action for the Forums Posting Bot
 
-Writing your own action for the forums posting bot is fairly simple. The bot uses [glob](https://www.npmjs.com/package/glob) to look through folders to find the actions, so you don't need to modify any other files. You just need to create a new folder for your action with the action code in index.ts.
+The bot comes with a limited set of actions. Writing your own action for the forums posting bot is fairly simple. The actions are written in TypeScript. Each action is an async function that has no return value - it returns Promise \<void\>. Actions may, but are not required to, make a post on the forums by calling the [`makePost`](https://github.com/jacobwicks/forumsBot/blob/master/bot/services/MakePost/index.ts) function. 
+
+The bot uses [glob](https://www.npmjs.com/package/glob) to look through folders to find the actions. This means that you don't need to modify any other files to add your action to the bot. You just need to create a new folder for your action and export the action function from the index.ts file. When you run the bot, it will find your action in its folder and automatically add it to the active actions. Your action will then show up in the bot control panel, the bot instructions, and be used by the bot to respond to instructions from the forums.
+
+# Folder Contents
+The action folder will contain
+* index.ts
+* instructions.md
+* example.md
 
 # Folder Location
-The action folders are in `/bot/services/actions`. Each folder contains the `index.ts` file. The `index.ts` file exports the action function, the array of triggers, and the name string. Each folder may also contain markdown instructions and/or examples.
+The action folders are in [`/bot/services/actions`](https://github.com/jacobwicks/forumsBot/tree/master/bot/services/actions). Each folder contains an `index.ts` file. The `index.ts` file exports the action function, the array of triggers, and the name string. Each folder may also contain markdown instructions and/or examples.
 
 # Optional Markdown
-If you want to you can write instructions in a markdown file instructions.md. The instructions will be displayed on the instructions page for the bot when your action is active.
+If you want to you can write instructions in a markdown file `instructions.md`. The instructions will be displayed on the instructions page for the bot when your action is active.
 
 If your action is triggered by regular expressions you can write examples of how to trigger the regular expressions in a markdown file named example.md. 
+
+## Action Code
+Actions are invoked when the bot reads a forums post that contains an instruction addressed to the bot. You tell the bot when to invoke your action by setting the trigger strings and/or regular expressions. When an instruction matches a trigger, the bot will invoke the corresponding action with the arguments below.
+
+# Arguments
+Each action will be invoked with this set of arguments. You can use them in the function to make the content of your post.
+
+<details>
+<summary markdown="span">Action Arguments</summary>
+```
+{
+    //the info of the user that wrote the post
+    author: SAUser;
+
+    //the body of the post, without other quoted posts inside it
+    body: string;
+
+    //the date the post was made
+    date: Date;
+
+    //the unique postId number
+    id: number;
+    //same as id
+    postId: number;
+
+    //the img.src property of the first image in the post
+    image?: string;
+
+    //the img.src property of all images in the post except forums smileys
+    images: string[];
+
+    //the instruction that invoked the action
+    instruction: string;
+    
+    //a link to the post
+    link: string;
+
+    //the unique id of the thread where the instruction was issued
+    threadId: number
+
+    //the entire post object with the instruction
+    post: Instruction
+}
+```
+</details>
+
+<details>
+<summary markdown="span">SAUser interface</summary>
+```
+export interface SAUser {
+    avatar?: string;
+    id: number;
+    name: string;
+    title?: string;
+    profile: string;
+    regDate: string;
+}
+```
+</details>
+
+<details>
+<summary markdown="span">Instruction/Post interfaces</summary>
+```
+export interface Post {
+    //the name of the user that wrote the post
+    author: SAUser;
+
+    //the body of the post, without other quoted posts inside it
+    body: string;
+
+    //the date the post was made
+    date: Date;
+
+    //the unique postId number
+    id: number;
+
+    //the img.src property
+    image?: string;
+
+    //the img.src property of all images in the post except forums smileys
+    images: string[];
+
+    //a link to the post
+    link: string;
+}
+```
+```
+export interface Instruction extends Post {
+    instruction: string;
+}
+```
+</details>
+
+<br/>
 
 ## Example Action: Tayne
 ![](https://i.imgur.com/5oCbDFL.gif)
 
 Tayne is a dancing character from a comedy sketch. This action posts a gif of his trademark 'hat wobble' move.
 
-## Action Code
-Here we have index.ts from the action `Tayne`. 
+# Example Action Code: Tayne
+This is the index.ts code from the action `Tayne`. This action is found in [`/bot/services/actions/Tayne`](https://github.com/jacobwicks/forumsBot/tree/master/bot/services/actions/Tayne). 
 
 {% highlight ts linenos%}
 blockName: postTayne
@@ -163,6 +276,8 @@ const processor = {
     hello: postHelloWorld
 };
 ```
+
+Code excerpt from function `getHandleInstructions`, found in [`/bot/services/actions/index.ts`](https://github.com/jacobwicks/forumsBot/blob/master/bot/services/actions/index.ts)
 
 {% highlight javascript linenos%}
 blockName: relaxedSearch 

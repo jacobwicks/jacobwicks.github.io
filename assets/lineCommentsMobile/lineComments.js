@@ -14,6 +14,22 @@ import mobilecheck from './modules/mobileCheck.js';
     const getWindowWidth = () =>
         Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 
+    const getDocumentHeight = () => {
+        const body = document.body;
+        const html = document.documentElement;
+
+        const height = Math.max(
+            body.scrollHeight,
+            body.offsetHeight,
+            html.clientHeight,
+            html.scrollHeight,
+            html.offsetHeight
+        );
+
+        return height;
+    };
+
+    let prevDocumentHeight = getDocumentHeight();
     //store the previous value of the window width so we can check for resize events
     let prevWindowWidth = getWindowWidth();
 
@@ -50,7 +66,6 @@ import mobilecheck from './modules/mobileCheck.js';
     //without this check, the mobile comments disappear when you scroll up
     window.addEventListener('resize', () => {
         const currentWindowWidth = getWindowWidth();
-
         //the check for a change in window width
         if (currentWindowWidth !== prevWindowWidth) {
             //store the current window width
@@ -65,4 +80,21 @@ import mobilecheck from './modules/mobileCheck.js';
             });
         }
     });
+
+    const observer = new ResizeObserver(([{ contentRect }]) => {
+        const { height } = contentRect;
+        if (height !== prevDocumentHeight) {
+            prevDocumentHeight = height;
+
+            //call the debounced version of positionAllComments
+            debouncedPositionAllComments({
+                codeBlocks,
+                comments,
+                details,
+                isMobile,
+            });
+        }
+    });
+
+    observer.observe(document.querySelector('body'));
 }
