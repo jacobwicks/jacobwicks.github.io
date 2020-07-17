@@ -31,6 +31,8 @@ You can look at a copy of the bot instructions here: <https://jacobwicks.github.
     The forums bot is written in JavaScript. Node is the program that lets you run it on your computer.
     This will also install Node Package Manager (npm). NPM is used to download JavaScript software packages.
 
+** Note: you need a version of Node that supports Optional Chaining **
+
 3. Clone the `forumsBot` repo
 
     A "repo" (short for repository) is the address where files that make up a computer program are stored.
@@ -133,6 +135,9 @@ You'll need a GitHub account.
     The instructions setup will generate an instructions website based on the settings of your bot. This website will be hosted on GitHub pages using the repo that you created. When you make changes to how your bot works, you can use the control panel or the command line to update the instructions website.  
 
     [Curious about how the instructions script works?]({% post_url 2020-07-07-forums-bot-explain-instructions-setup-script %})
+
+    ** You may have to enter your github username and password **
+    The instructions script pushes changes to the repo you just created. Depending on your github command line settings, you may be prompted to enter your github username and password. This prompt is from the git command line, not from setup. Just enter your username and password and git will then execute the commands and the setup script will continue.  
 
 7. Control Panel Will Start Automatically
 
