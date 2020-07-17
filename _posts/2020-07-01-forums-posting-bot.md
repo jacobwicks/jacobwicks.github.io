@@ -31,7 +31,8 @@ You can look at a copy of the bot instructions here: <https://jacobwicks.github.
     The forums bot is written in JavaScript. Node is the program that lets you run it on your computer.
     This will also install Node Package Manager (npm). NPM is used to download JavaScript software packages.
 
-** Note: you need a version of Node that supports Optional Chaining **
+# Note: you need a version of Node that supports Optional Chaining
+    Minimum of Node 14.0. [Link to Node 14.5](https://nodejs.org/dist/v14.5.0/node-v14.5.0-x64.msi)
 
 3. Clone the `forumsBot` repo
 
@@ -105,7 +106,7 @@ You'll need a GitHub account.
 
     If you want the bot to work, you need to give it a working SA Forums Account Username and Password. If you don't care if it actually runs, you can skip these steps. You can change them later in the "Credentials" tab of the control panel.
 
-    * **botName**
+    * **botName** 
 
     ![botName](/assets//images/2020-07-01/promptBotName.png)
 
