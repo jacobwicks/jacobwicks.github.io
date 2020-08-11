@@ -38,18 +38,19 @@ $ npm init -y
 ```
 
 Install [**express**](https://www.npmjs.com/package/express).
-express will let us make a web server.
+express will let us make a web server. A web server accepts requests from web browsers and sends data back. The web server will let users request memes, run the code to create the memes, and send the meme files as a response to the request.
 
 ```
 $ npm i express
 ```
 
-Install [**node-canvas**](https://www.npmjs.com/package/canvas). node-canvas is a version of the HTML [canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) that runs in node instead of in the browser.
+Install [**node-canvas**](https://www.npmjs.com/package/canvas). node-canvas is a version of the HTML [canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) that runs in node instead of in the browser. The canvas API lets you use JavaScript to create and change images and text. We'll start by using canvas to make a .jpg that contains text. Then later we'll write the code that loads an image into the canvas before drawing text on top of it. 
 
 ```
 $ npm i canvas
 ```
 
+# Make the Web Server
 Ok, now we are ready to write some code.
 Create a new file named `index.js`. Write this code in it.
 
@@ -82,6 +83,9 @@ Start the server.
 ```
 $ nodemon index
 ```
+You should see this:
+
+![server running](/assets//images/2020-08-10/serverRunning.png)
 
 Now you can reach your server by going to http://localhost:8081/
 
@@ -151,22 +155,34 @@ The [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) is
 The [2d canvas context](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D) is the part of the canvas API where you load text.
 </div>
 
+<div class='lineComment' id='{block: makeTextImage, line:17 }'>
+This string tells canvas what font settings to use. Once you have it working try changing the font, style, and the size.
+</div>
+
+<div class='lineComment' id='{block: makeTextImage, line:17 }'>
+We need to measure the text and make the canvas wider than the text. If we don't, then the text will get cut off because it is bigger than the canvas it is getting drawn on.
+</div>
+
 <div class='lineComment' id='{block: makeTextImage, line: 36 }'>
 Drawing the meme text in white with a black outline takes more than one step. The first step is to use the [Context FillText function](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText) to draw the text. 
 </div>
 
 <div class='lineComment' id='{block: makeTextImage, line: 42}'>
-The second step for the meme text is to use the Context  to [Context StrokeText function](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeText) to draw the outline in black.
+The second step for the meme text is to use the [Context StrokeText function](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeText) to draw the outline in black.
 </div>
 
 <div class='lineComment' id='{block: makeTextImage, line: 45 }'>
-We want binary data to send to the browser.
+We want binary data to send to the browser. Just sending the whole canvas object won't work.
 The [Node Buffer](https://nodejs.org/api/buffer.html#buffer_class_buffer) is binary data.
 The [Node Canvas .toBuffer function](https://github.com/Automattic/node-canvas#canvastobuffer) will return the canvas as a buffer.
+
 </div>
 
 # Make a Route to Return a Text Image
+
 Put this code in **right under where you declare `const port = 8081;`**
+
+Users will access this route by going to your server address followed by `/text/` and whatever text they want in an image. The route function will then call the `makeTextImage` function that you wrote earlier. It calls `makeTextImage` with the input string that the user typed. `makeTextImage` then uses the input string to make an image of the text and returns the image as binary data. The route function adds headers to the response object so the browser knows it is getting an image. Then the route function uses the response object to return the image data to the browser. 
 
 {% highlight javascript linenos%}
 blockName: textRoute
@@ -196,6 +212,12 @@ app.get("/text/:input", (req, res) => {
   res.end(image);
 });
 {% endhighlight %}
+
+<div class='lineComment' id='{block: textRoute, line:3 }'>
+':' is the way to put a variable in the parameters of an express route.
+We named this variable 'input', so the route path `/text` is followed by `:input` 
+</div>
+
 <div class='lineComment' id='{block: textRoute, line: 6 }'>
 [Optional Chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) lets you easily access nested properties of objects without causing an error if something returns undefined. Here we use it to get the input from the params property of the request object.
 </div>
@@ -227,10 +249,27 @@ Get the `loadImage` function from the canvas library.
 //loadImage is the function that loads an image
 const { createCanvas, loadImage } = require("canvas");
 ```
+<details><summary markdown="span">A word about async/await</summary>
+You'll see the words `async` and `await` in the `makeMeme` function. What does that mean? 
 
+The `loadImage` function is an `async` function. When you call the `loadImage` function, it does not immediately return the image data. `loadImage` has to find the image on whatever server the image is hosted on, contact the server, and wait to get the image back. So when you call `loadImage`, it first returns a ['promise'](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that it will eventually give you the image data. Then after `loadImage` has gotten the image, `loadImage` resolves the promise and returns the image data. 
+
+**async functions give you a promise first, then the return value later**
+
+`await` lets us tell the code to wait for the image data before trying to do something with it. If we didn't `await` for loadImage to finish, the rest of the code would try to run using the value of the unresolved promise. The unresolved promise doesn't have the image data in it. So the rest of the code wouldn't work. 
+
+**await lets you wait for the actual return value of a function instead of just the promise**
+
+When we want to use the `await` keyword we have to declare that the function is `async`. That's why our `makeMeme` function is `async`. `makeMeme` is `async` because `makeMeme` calls `loadImage`, and we want `makeMeme` to `await` the return value of `loadImage`.
+
+**you can only use `await` inside of `async` functions.
+
+For more, go to this link: <https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Async_await>
+</details>
 # Write the `makeMeme` function. 
 
-Put the `makeMeme` function under the `makeTextImage` function but **above the routes**.
+Put the `makeMeme` function under the `makeTextImage` function but **above the routes**. If you need to see where, look at the complete index.js on GitHub: <https://github.com/jacobwicks/memeMaker/blob/master/index.js>
+
 {% highlight javascript linenos%}
 blockName: makeMeme
 const makeMeme = async ({
@@ -289,7 +328,7 @@ const makeMeme = async ({
   return canvas.toBuffer();
 };
 {% endhighlight %}
-<div class='lineComment' id='{block: makeMeme, line: 3 }'>
+<div class='lineComment' id='{block: makeMeme, line: 1 }'>
 [Async](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) lets us call another function and wait for it to return a value. We use it to wait for the image to load.
 </div>
 
@@ -300,9 +339,12 @@ const makeMeme = async ({
 <div class='lineComment' id='{block: makeMeme, line: 39}'>
 The [drawImage function](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage) is how you put an image onto the canvas. We put the image on first then draw the text on top of it.
 </div>
+
 # Add a Route That Returns a Meme
 
 Add this route **right under where you declare `const port = 8081;`**
+
+`/meme/` accepts an input string just like our `/text/` route. It also accepts an image URL. Then the `meme` route calls the `makeMeme` function you just wrote. It calles `makeMeme` with the input string and the image URL. When `makeMeme` is called it loads the image from the url then uses the input string to draw the text on top of the image. The `/meme` route function waits for `makeMeme` to return the meme as a binary data buffer. Once `makeMeme` is done, the `meme` route function assigns headers to the response object so the browser knows its getting an image. Then the route sends the image data to the browser.
 
 {% highlight javascript linenos%}
 blockName: memeRoute
