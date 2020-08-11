@@ -517,7 +517,7 @@ Now your Heroku App is connected to your GitHub repo!
 ![herokuConnectedRepo](/assets//images/2020-08-10/herokuConnectedRepo.png)
 
 # Build the App
-Click the 'build' button in the Manual Deploy section.
+Click the 'deploy branch' button in the Manual Deploy section.
 ![herokuBuilding](/assets//images/2020-08-10/herokuBuilding.png)
 
 It should say "**Your app was successfully deployed**"
