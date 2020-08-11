@@ -172,14 +172,14 @@ Put this code in **right under where you declare `const port = 8081;`**
 blockName: textRoute
 //text is the route
 //:input designates a parameter of the route
-app.get("/text/:input", async (req, res) => {
+app.get("/text/:input", (req, res) => {
   //the ? means optional chaining
   //input will be a string equal to whatever the user types after the route
   const input = req?.params?.input;
 
   //call the makeTextImage function
   //and wait for it to return the buffer object
-  const image = await makeTextImage(input);
+  const image = makeTextImage(input);
 
   //create the headers for the response
   //200 is HTTTP status code 'ok'
@@ -290,7 +290,11 @@ const makeMeme = async ({
 };
 {% endhighlight %}
 <div class='lineComment' id='{block: makeMeme, line: 3 }'>
-[Async](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) lets call another function and wait for it to return a value. We use it to wait for the image 
+[Async](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) lets us call another function and wait for it to return a value. We use it to wait for the image to load.
+</div>
+
+<div class='lineComment' id='{block: makeMeme, line: 21 }'>
+[Await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) lets call wait for the return value of a function. We use it to wait for the image to load. The image loading is asynchronous because it has to call another server to load the image.
 </div>
 
 <div class='lineComment' id='{block: makeMeme, line: 39}'>
@@ -339,12 +343,8 @@ app.get("/meme/:input/:url*", async (req, res) => {
 });
 {% endhighlight %}
 
-<div class='lineComment' id='{block: memeRoute, line: 4 }'>
-Async
-</div>
-
 <div class='lineComment' id='{block: memeRoute, line: 25}'>
-Await
+`makeMeme` is an async function because it has to wait for the async function `imageLoad` to finish before it can return a value. So `memeRoute` uses `await` to wait for the return value of `makeMeme` before returning the image. 
 </div>
 
 Now you can get memes by going to `localhost:8081/meme`.
@@ -535,6 +535,7 @@ Now you can make memes that say whatever you want!
 * Let the user put text at the top and bottom of the image using more path parameters
 * The text gets cut off if it's too long. Make it write multiple lines instead
 * Putting '?' in the meme text won't work. Make it work with question marks
+* There's no error handling or checking for bad inputs. Add error handling and make sure the app won't crash if it gets bad input
  
  <details><summary markdown="span"> What to do if deployment didn't work
  </summary>
