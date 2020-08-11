@@ -262,10 +262,11 @@ The `loadImage` function is an `async` function. When you call the `loadImage` f
 
 When we want to use the `await` keyword we have to declare that the function is `async`. That's why our `makeMeme` function is `async`. `makeMeme` is `async` because `makeMeme` calls `loadImage`, and we want `makeMeme` to `await` the return value of `loadImage`.
 
-**you can only use `await` inside of `async` functions.
+**you can only use `await` inside of `async` functions.**
 
 For more, go to this link: <https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Async_await>
 </details>
+
 # Write the `makeMeme` function. 
 
 Put the `makeMeme` function under the `makeTextImage` function but **above the routes**. If you need to see where, look at the complete index.js on GitHub: <https://github.com/jacobwicks/memeMaker/blob/master/index.js>
