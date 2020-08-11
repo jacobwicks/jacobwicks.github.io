@@ -543,7 +543,7 @@ That's too bad! But this is an opportunity to learn.
 
 To figure out what went wrong with your app, you need to look at the Heroku logs.
 
-First, [Install the Heroku CLI].
+First, [Install the Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install).
 
 Then, using the command line, look at the logs for your app. 
 
