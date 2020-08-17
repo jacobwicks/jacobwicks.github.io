@@ -330,7 +330,7 @@ const AddPage = () => {
 [View on GitHub](https://github.com/jacobwicks/reactContextWithCreateReducer/blob/master/src/components/AddPage/index.tsx)
 
 # Testing
-Testing the reducer function of each action is simple because each action file exports the individual reducer function. Here's the test for the reducer for `setCurrentPage`. This reducer should accept a 
+Testing the reducer function of each action is simple because each action file exports the individual reducer function. Here's the test for the reducer for `setCurrentPage`. This reducer should accept a number, and set the value of state.current to that number.
 
 **Remember:** If you choose to write reducers that mutate state directly, you don't get a return value from them. You should assert that the state object that you passed in has mutated.
 
